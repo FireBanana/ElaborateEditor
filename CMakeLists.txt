@@ -12,10 +12,13 @@ add_executable(ElaborateEditor
 	vendor/imgui/imgui_draw.cpp
 	vendor/imgui/imgui_tables.cpp
 	vendor/imgui/imgui_demo.cpp
-	vendor/imgui/imgui_widgets.cpp)
+	vendor/imgui/imgui_widgets.cpp
+	vendor/imgui/backends/imgui_impl_glfw.cpp
+	vendor/imgui/backends/imgui_impl_opengl3.cpp)
 
 include_directories(vendor/glad/include)
 include_directories(vendor/imgui)
+include_directories(vendor/imgui/backends)
 
 if(WIN32)
 	include_directories(vendor/glfw_win/include)
