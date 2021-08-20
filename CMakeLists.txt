@@ -5,8 +5,19 @@ set(CMAKE_SUPPRESS_REGENERATION true)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin/)
 set(CMAKE_RUNTIME_LIBRARY_DIRECTORY bin/)
 
+include_directories(vendor/glad/include)
+include_directories(vendor/imgui)
+include_directories(vendor/imgui/backends)
+
+include_directories(src/core/)
+include_directories(src/util/)
+
 add_executable(ElaborateEditor 
-	src/main.cpp 
+	src/main.cpp
+	src/util/Logger.h
+	src/core/Window.cpp
+	src/core/Window.h
+
 	vendor/glad/src/glad.c
 	vendor/imgui/imgui.cpp
 	vendor/imgui/imgui_draw.cpp
@@ -15,10 +26,6 @@ add_executable(ElaborateEditor
 	vendor/imgui/imgui_widgets.cpp
 	vendor/imgui/backends/imgui_impl_glfw.cpp
 	vendor/imgui/backends/imgui_impl_opengl3.cpp)
-
-include_directories(vendor/glad/include)
-include_directories(vendor/imgui)
-include_directories(vendor/imgui/backends)
 
 if(WIN32)
 	include_directories(vendor/glfw_win/include)
