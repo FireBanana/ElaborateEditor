@@ -5,18 +5,23 @@ set(CMAKE_SUPPRESS_REGENERATION true)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin/)
 set(CMAKE_RUNTIME_LIBRARY_DIRECTORY bin/)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 include_directories(vendor/glad/include)
 include_directories(vendor/imgui)
 include_directories(vendor/imgui/backends)
 
 include_directories(src/core/)
 include_directories(src/util/)
+include_directories(src/core/events/)
 
 add_executable(ElaborateEditor 
 	src/main.cpp
 	src/util/Logger.h
 	src/core/Window.cpp
 	src/core/Window.h
+	src/core/events/Event.h
+	src/core/events/WindowResizeEvent.h
 
 	vendor/glad/src/glad.c
 	vendor/imgui/imgui.cpp
@@ -26,6 +31,20 @@ add_executable(ElaborateEditor
 	vendor/imgui/imgui_widgets.cpp
 	vendor/imgui/backends/imgui_impl_glfw.cpp
 	vendor/imgui/backends/imgui_impl_opengl3.cpp)
+
+source_group("src/" FILES 
+	src/main.cpp)
+
+source_group("src/core" FILES
+	src/core/Window.cpp
+	src/core/Window.h)
+
+source_group("src/core/events" FILES
+	src/core/events/Event.h
+	src/core/events/WindowResizeEvent.h)
+
+source_group("src/util" FILES 
+	src/util/Logger.h)
 
 if(WIN32)
 	include_directories(vendor/glfw_win/include)

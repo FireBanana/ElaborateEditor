@@ -1,5 +1,6 @@
 #include "Window.h"
 #include "Logger.h"
+#include "WindowResizeEvent.h"
 
 Window::Window()
 {
@@ -21,6 +22,23 @@ Window::Window()
         Logger::LOG_ERROR("Failed to initialize opengl context");
     }
 
+    glfwSetWindowUserPointer(m_Window, this);
+
+    // Set Events
+
+    glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) 
+        {
+            Window w = *(Window*)glfwGetWindowUserPointer(window);
+
+            WindowResizeEvent e;
+            e.Width = width;
+            e.Height = height;
+
+            w.OnEvent(e);
+        });
+
+    //
+
     ImGui::CreateContext();
 
     ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
@@ -31,6 +49,7 @@ Window::Window()
 
 void Window::Update()
 {
+    //TODO Move to renderer
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
@@ -47,4 +66,19 @@ void Window::Update()
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    //
+
+    //Handle events
+    //Logger::LOG_INFO(((WindowEvent*)glfwGetWindowUserPointer(m_Window))->type);
+}
+
+void Window::OnEvent(Event& event)
+{
+    EventHandler eHandler(event);
+
+    eHandler.Dispatch<WindowResizeEvent>([&event]() 
+        {
+            //Logger::LOG_INFO(((WindowResizeEvent&)event).Width);
+        std::cout << ((WindowResizeEvent&)event).Width << ", " << ((WindowResizeEvent&)event).Height << std::endl;
+        });
 }

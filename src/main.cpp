@@ -6,7 +6,7 @@
 int main(void)
 {
 	Window win = Window::Window();
-	
+
     while (!glfwWindowShouldClose(win.GetWindow()))
     {
         glClear(GL_COLOR_BUFFER_BIT);
