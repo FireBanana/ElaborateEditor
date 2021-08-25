@@ -2,39 +2,42 @@
 #include "Logger.h"
 #include "WindowResizeEvent.h"
 
-Window::Window()
+Window::Window(uint16_t width, uint16_t height)
+    : m_Width(width), m_Height(height)
 {
     if (!glfwInit())
-        Logger::LOG_ERROR("Glfw failed to initialize");
+        LOG_ERROR("Glfw failed to initialize");
 
-    m_Window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    m_Window = glfwCreateWindow(width, height, "Hello World", NULL, NULL);
 
     if (!m_Window)
     {
         glfwTerminate();
-        Logger::LOG_ERROR("Glfw failed to initialize");
+        LOG_ERROR("Glfw failed to initialize");
     }
 
     glfwMakeContextCurrent(m_Window);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        Logger::LOG_ERROR("Failed to initialize opengl context");
+        LOG_ERROR("Failed to initialize opengl context");
     }
 
     glfwSetWindowUserPointer(m_Window, this);
 
     // Set Events
 
-    glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) 
+    LOG_INFO(this);
+    glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* _window, int _width, int _height) 
         {
-            Window w = *(Window*)glfwGetWindowUserPointer(window);
+            Window* w = (Window*)glfwGetWindowUserPointer(_window);
+            LOG_INFO(&w);
 
             WindowResizeEvent e;
-            e.Width = width;
-            e.Height = height;
+            e.Width = _width;
+            e.Height = _height;
 
-            w.OnEvent(e);
+            w->OnEvent(e);
         });
 
     //
@@ -60,25 +63,23 @@ void Window::Update()
     if (ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
     {
         ImGui::SetWindowPos(ImVec2(0, 0));
-        ImGui::SetWindowSize(ImVec2(640, 480));
+        ImGui::SetWindowSize(ImVec2(m_Width, m_Height));
         ImGui::End();
     }
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     //
-
-    //Handle events
-    //Logger::LOG_INFO(((WindowEvent*)glfwGetWindowUserPointer(m_Window))->type);
 }
 
 void Window::OnEvent(Event& event)
 {
     EventHandler eHandler(event);
 
-    eHandler.Dispatch<WindowResizeEvent>([&event]() 
+    eHandler.Dispatch<WindowResizeEvent>([&]() 
         {
-            //Logger::LOG_INFO(((WindowResizeEvent&)event).Width);
-        std::cout << ((WindowResizeEvent&)event).Width << ", " << ((WindowResizeEvent&)event).Height << std::endl;
+            WindowResizeEvent* e = static_cast<WindowResizeEvent*>(&event);
+            m_Width = e->Width;
+            m_Height = e->Height;
         });
 }

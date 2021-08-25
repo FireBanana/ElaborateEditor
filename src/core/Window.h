@@ -10,14 +10,8 @@
 
 class Window
 {
-private:
-	struct WindowData
-	{
-		unsigned int Width, Height;		
-	};
-
 public:
-	Window();
+	Window(uint16_t width, uint16_t height);
 	void Update();
 	void OnEvent(Event& event);
 
@@ -27,5 +21,6 @@ public:
 private:
 	GLFWwindow* m_Window;
 	ImGuiIO* m_IO;
-	WindowData m_Data;
+
+	uint16_t m_Height, m_Width;
 };

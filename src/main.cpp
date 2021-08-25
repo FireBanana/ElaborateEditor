@@ -2,10 +2,11 @@
 #include <GLFW/glfw3.h>
 
 #include "Window.h"
+#include "Logger.h"
 
 int main(void)
 {
-	Window win = Window::Window();
+	Window win = Window(1280, 720);
 
     while (!glfwWindowShouldClose(win.GetWindow()))
     {
