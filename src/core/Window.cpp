@@ -27,11 +27,9 @@ Window::Window(uint16_t width, uint16_t height)
 
     // Set Events
 
-    LOG_INFO(this);
     glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* _window, int _width, int _height) 
         {
             Window* w = (Window*)glfwGetWindowUserPointer(_window);
-            LOG_INFO(&w);
 
             WindowResizeEvent e;
             e.Width = _width;
