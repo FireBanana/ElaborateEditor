@@ -7,6 +7,7 @@
 #include <imgui_impl_opengl3.h>
 
 #include "events/Event.h"
+#include "ImguiRenderer.h"
 
 class Window
 {
@@ -21,6 +22,8 @@ public:
 private:
 	GLFWwindow* m_Window;
 	ImGuiIO* m_IO;
+
+	ImguiRenderer m_ImguiRenderer;
 
 	uint16_t m_Height, m_Width;
 };

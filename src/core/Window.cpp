@@ -39,35 +39,14 @@ Window::Window(uint16_t width, uint16_t height)
         });
 
     //
-
-    ImGui::CreateContext();
-
-    ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");  
-
+      
+    m_ImguiRenderer = ImguiRenderer(m_Window);
     m_IO = &(ImGui::GetIO());
 }
 
 void Window::Update()
 {
-    //TODO Move to renderer
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-
-    bool demo = true;
-    ImGui::ShowDemoWindow(&demo);
-
-    if (ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
-    {
-        ImGui::SetWindowPos(ImVec2(0, 0));
-        ImGui::SetWindowSize(ImVec2(m_Width, m_Height));
-        ImGui::End();
-    }
-
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    //
+    m_ImguiRenderer.Render(m_Width, m_Height);
 }
 
 void Window::OnEvent(Event& event)

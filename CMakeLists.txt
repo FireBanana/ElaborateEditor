@@ -22,6 +22,9 @@ add_executable(ElaborateEditor
 	src/core/Window.h
 	src/core/events/Event.h
 	src/core/events/WindowResizeEvent.h
+	src/core/events/KeyPressedEvent.h
+	src/core/ImguiRenderer.cpp
+	src/core/ImguiRenderer.h
 
 	vendor/glad/src/glad.c
 	vendor/imgui/imgui.cpp
@@ -37,11 +40,14 @@ source_group("src/" FILES
 
 source_group("src/core" FILES
 	src/core/Window.cpp
-	src/core/Window.h)
+	src/core/Window.h
+	src/core/ImguiRenderer.cpp
+	src/core/ImguiRenderer.h)
 
 source_group("src/core/events" FILES
 	src/core/events/Event.h
-	src/core/events/WindowResizeEvent.h)
+	src/core/events/WindowResizeEvent.h
+	src/core/events/KeyPressedEvent.h)
 
 source_group("src/util" FILES 
 	src/util/Logger.h)
