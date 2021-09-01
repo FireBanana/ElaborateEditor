@@ -5,7 +5,7 @@ set(CMAKE_SUPPRESS_REGENERATION true)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin/)
 set(CMAKE_RUNTIME_LIBRARY_DIRECTORY bin/)
 
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON) 
 
 include_directories(vendor/glad/include)
 include_directories(vendor/imgui)
@@ -53,6 +53,8 @@ source_group("src/util" FILES
 	src/util/Logger.h)
 
 if(WIN32)
+	message("Building for Win32...")
+
 	include_directories(vendor/glfw_win/include)
 	target_link_libraries(ElaborateEditor
 		 ${CMAKE_SOURCE_DIR}/vendor/glfw_win/lib/glfw3.lib
@@ -60,7 +62,15 @@ if(WIN32)
 endif(WIN32)
 
 if(UNIX)
+	message("Building for Unix...")
+
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+	add_definitions(-std=c++14)
+
 	include_directories(vendor/glfw_mac/include)
 	target_link_libraries(ElaborateEditor
 		 ${CMAKE_SOURCE_DIR}/vendor/glfw_mac/lib/libglfw3.a)
+
+	target_link_libraries(ElaborateEditor
+		"-framework OpenGL" "-framework Cocoa" "-framework IOKit")
 endif(UNIX)
