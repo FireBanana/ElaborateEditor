@@ -8,6 +8,12 @@ Window::Window(uint16_t width, uint16_t height)
     if (!glfwInit())
         LOG_ERROR("Glfw failed to initialize");
 
+    //Required for deploying on Mac
+    glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    
     m_Window = glfwCreateWindow(width, height, "Hello World", NULL, NULL);
 
     if (!m_Window)
