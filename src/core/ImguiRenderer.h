@@ -5,17 +5,24 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+struct ImguiRenderData
+{
+	uint16_t width;
+	uint16_t height;
+
+	std::string text;
+};
+
 class ImguiRenderer
 {
 public:
 	ImguiRenderer() {};
 	ImguiRenderer(GLFWwindow* window);
 
-	void Render(uint16_t width, uint16_t height);
-	void OnDraw();
+	void Render(ImguiRenderData& data);
 
 private:
 	GLFWwindow* m_Window;
 
-	void DrawMainWindow(uint16_t width, uint16_t height);
+	void DrawMainWindow(ImguiRenderData& datat);
 };

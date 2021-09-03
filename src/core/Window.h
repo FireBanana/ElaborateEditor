@@ -24,6 +24,5 @@ private:
 	ImGuiIO* m_IO;
 
 	ImguiRenderer m_ImguiRenderer;
-
-	uint16_t m_Height, m_Width;
+	ImguiRenderData m_RenderData;
 };

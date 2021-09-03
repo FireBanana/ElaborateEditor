@@ -9,7 +9,7 @@ ImguiRenderer::ImguiRenderer(GLFWwindow* window)
     ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-void ImguiRenderer::Render(uint16_t width, uint16_t height)
+void ImguiRenderer::Render(ImguiRenderData& data)
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -17,7 +17,7 @@ void ImguiRenderer::Render(uint16_t width, uint16_t height)
 
     //-------Rendering------
 
-    DrawMainWindow(width, height);
+    DrawMainWindow(data);
 
     //----------------------
 
@@ -25,7 +25,7 @@ void ImguiRenderer::Render(uint16_t width, uint16_t height)
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void ImguiRenderer::DrawMainWindow(uint16_t width, uint16_t height)
+void ImguiRenderer::DrawMainWindow(ImguiRenderData& data)
 {
     if (ImGui::Begin("Main", nullptr,
         ImGuiWindowFlags_NoMove |
@@ -34,8 +34,8 @@ void ImguiRenderer::DrawMainWindow(uint16_t width, uint16_t height)
         ImGuiWindowFlags_NoTitleBar))
     {
         ImGui::SetWindowPos(ImVec2(0, 0));
-        ImGui::SetWindowSize(ImVec2(width, height));
-        ImGui::TextWrapped("This is some wrappeed text matey, lets see if it wraps");
+        ImGui::SetWindowSize(ImVec2(data.width, data.height));
+        ImGui::TextWrapped(data.text.c_str());
         ImGui::End();
     }
 }
