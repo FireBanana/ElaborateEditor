@@ -44,15 +44,16 @@ Window::Window(uint16_t width, uint16_t height)
             w->OnEvent(e);
         });
 
-    glfwSetKeyCallback(m_Window, [](GLFWwindow* _window, int _key, int _scancode, int _action, int _mods) 
+    glfwSetKeyCallback(m_Window, [](GLFWwindow* _window, int _key, int _scancode, int _action, int _mods)
         {
-            if (_action != GLFW_PRESS)
+            if (_action != GLFW_PRESS || _mods != 0)
                 return;
 
             Window* w = (Window*)glfwGetWindowUserPointer(_window);
 
             KeyPressedEvent e;
             e.Key = _key;
+            e.Mods = _mods;
 
             w->OnEvent(e);
         });
@@ -82,6 +83,18 @@ void Window::OnEvent(Event& event)
     eHandler.Dispatch<KeyPressedEvent>([&]()
         {
             KeyPressedEvent* e = static_cast<KeyPressedEvent*>(&event);
-            m_RenderData.text += (char)e->Key;
+        
+            switch(e->Key)
+            {
+                case GLFW_KEY_BACKSPACE:
+                    m_RenderData.text.pop_back();
+                    break;
+                case GLFW_KEY_ENTER:
+                    m_RenderData.text += '\n';
+                    break;
+                default:
+                    m_RenderData.text += (char)e->Key;
+            }GLFW_KEY_A;
+            
         });
 }

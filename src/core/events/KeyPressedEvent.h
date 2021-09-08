@@ -7,5 +7,6 @@ public:
 	SET_STATIC_TYPE(KEY_PRESSED);
 	EventType inline GetType() { return EventType::KEY_PRESSED; }
 
-	unsigned int Key;
+	int Key;
+    int Mods;
 };
