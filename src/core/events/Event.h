@@ -6,7 +6,8 @@ enum class EventType
 {
 	WINDOW_RESIZE,
 	MOUSE_MOVED,
-	KEY_PRESSED
+	KEY_PRESSED,
+	CHAR_PRESSED
 };
 
 #define SET_STATIC_TYPE(type) static EventType GetStaticType() { return EventType::type; }

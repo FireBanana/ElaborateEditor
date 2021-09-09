@@ -325,7 +325,7 @@ void ImGui::TextWrappedV(const char* fmt, va_list args)
     bool need_backup = (g.CurrentWindow->DC.TextWrapPos < 0.0f);  // Keep existing wrap position if one is already set
     if (need_backup)
         PushTextWrapPos(0.0f);
-w    if (fmt[0] == '%' && fmt[1] == 's' && fmt[2] == 0)
+    if (fmt[0] == '%' && fmt[1] == 's' && fmt[2] == 0)
         TextEx(va_arg(args, const char*), NULL, ImGuiTextFlags_NoWidthForLargeClippedText); // Skip formatting
     else
         TextV(fmt, args);

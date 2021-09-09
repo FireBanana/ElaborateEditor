@@ -36,6 +36,22 @@ void ImguiRenderer::DrawMainWindow(ImguiRenderData& data)
         ImGui::SetWindowPos(ImVec2(0, 0));
         ImGui::SetWindowSize(ImVec2(data.width, data.height));
         ImGui::TextWrapped(data.text.c_str());
+
+        //for (int i = 0; i < data.text.size(); i++)
+        //{
+        ImVec2 textDrawOffset = ImGui::GetStyle().WindowPadding;
+        ImVec2 paragraphSize = ImGui::CalcTextSize(data.text.c_str());
+
+        textDrawOffset.x += paragraphSize.x;
+        textDrawOffset.y += paragraphSize.y;
+        
+        ImGui::GetWindowDrawList()->AddRect(
+            ImVec2(0, 0),
+            textDrawOffset,
+            ImColor::ImColor(255, 255, 255, 255)
+            );
+        //}
+
         ImGui::End();
     }
 }

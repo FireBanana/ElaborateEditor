@@ -23,6 +23,7 @@ add_executable(ElaborateEditor
 	src/core/events/Event.h
 	src/core/events/WindowResizeEvent.h
 	src/core/events/KeyPressedEvent.h
+	src/core/events/CharPressedEvent.h
 	src/core/ImguiRenderer.cpp
 	src/core/ImguiRenderer.h
 
@@ -47,7 +48,8 @@ source_group("src/core" FILES
 source_group("src/core/events" FILES
 	src/core/events/Event.h
 	src/core/events/WindowResizeEvent.h
-	src/core/events/KeyPressedEvent.h)
+	src/core/events/KeyPressedEvent.h
+	src/core/events/CharPressedEvent.h)
 
 source_group("src/util" FILES 
 	src/util/Logger.h)

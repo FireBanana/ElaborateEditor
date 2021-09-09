@@ -2,6 +2,7 @@
 #include "Logger.h"
 #include "WindowResizeEvent.h"
 #include "KeyPressedEvent.h"
+#include "CharPressedEvent.h"
 
 Window::Window(uint16_t width, uint16_t height)
 {
@@ -58,6 +59,18 @@ Window::Window(uint16_t width, uint16_t height)
             w->OnEvent(e);
         });
 
+    glfwSetCharCallback(m_Window, [](GLFWwindow* _window, unsigned int codepoint) 
+        {
+            
+            Window* w = (Window*)glfwGetWindowUserPointer(_window);
+
+            CharPressedEvent e;
+            e.Key = codepoint;
+
+            w->OnEvent(e);
+
+        });
+
     //
       
     m_ImguiRenderer = ImguiRenderer(m_Window);
@@ -80,6 +93,13 @@ void Window::OnEvent(Event& event)
             m_RenderData.height = e->Height;
         });
 
+    eHandler.Dispatch<CharPressedEvent>([&]()
+        {
+            CharPressedEvent* e = static_cast<CharPressedEvent*>(&event);
+
+            m_RenderData.text += e->Key;
+        });
+
     eHandler.Dispatch<KeyPressedEvent>([&]()
         {
             KeyPressedEvent* e = static_cast<KeyPressedEvent*>(&event);
@@ -92,9 +112,7 @@ void Window::OnEvent(Event& event)
                 case GLFW_KEY_ENTER:
                     m_RenderData.text += '\n';
                     break;
-                default:
-                    m_RenderData.text += (char)e->Key;
-            }GLFW_KEY_A;
+            }
             
         });
 }
