@@ -97,7 +97,7 @@ void Window::OnEvent(Event& event)
         {
             CharPressedEvent* e = static_cast<CharPressedEvent*>(&event);
 
-            m_RenderData.text += e->Key;
+            m_RenderData.GetCurrentLine() += e->Key;
         });
 
     eHandler.Dispatch<KeyPressedEvent>([&]()
@@ -107,10 +107,10 @@ void Window::OnEvent(Event& event)
             switch(e->Key)
             {
                 case GLFW_KEY_BACKSPACE:
-                    m_RenderData.text.pop_back();
+                    m_RenderData.GetCurrentLine().pop_back();
                     break;
                 case GLFW_KEY_ENTER:
-                    m_RenderData.text += '\n';
+                    m_RenderData.GetCurrentLine() += '\n';
                     break;
             }
             

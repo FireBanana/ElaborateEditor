@@ -1,4 +1,5 @@
 #include "ImguiRenderer.h"
+#include <Logger.h>
 
 ImguiRenderer::ImguiRenderer(GLFWwindow* window)
     : m_Window(window)
@@ -35,22 +36,24 @@ void ImguiRenderer::DrawMainWindow(ImguiRenderData& data)
     {
         ImGui::SetWindowPos(ImVec2(0, 0));
         ImGui::SetWindowSize(ImVec2(data.width, data.height));
-        ImGui::TextWrapped(data.text.c_str());
 
-        //for (int i = 0; i < data.text.size(); i++)
-        //{
-        ImVec2 textDrawOffset = ImGui::GetStyle().WindowPadding;
-        ImVec2 paragraphSize = ImGui::CalcTextSize(data.text.c_str());
+        ImVec2& padding = ImGui::GetStyle().WindowPadding;
 
-        textDrawOffset.x += paragraphSize.x;
-        textDrawOffset.y += paragraphSize.y;
-        
-        ImGui::GetWindowDrawList()->AddRect(
-            ImVec2(0, 0),
-            textDrawOffset,
-            ImColor::ImColor(255, 255, 255, 255)
+        for (auto& line : data.textLines)
+        {
+            ImVec2 textDrawOffset;
+            ImVec2 lineSize = ImGui::CalcTextSize(line.second.c_str());
+            ImGui::Text(line.second.c_str());
+
+            textDrawOffset.x = lineSize.x + padding.x;
+            textDrawOffset.y = line.first * lineSize.y + lineSize.y + padding.y;
+
+            ImGui::GetWindowDrawList()->AddRect(
+                ImVec2(0, line.first * lineSize.y + padding.y),
+                textDrawOffset,
+                ImColor::ImColor(255, 255, 255, 255)
             );
-        //}
+        }        
 
         ImGui::End();
     }
