@@ -39,20 +39,28 @@ void ImguiRenderer::DrawMainWindow(ImguiRenderData& data)
 
         ImVec2& padding = ImGui::GetStyle().WindowPadding;
 
-        for (auto& line : data.textLines)
+        for (int lineNumber = 0; lineNumber < data.textLines.size(); lineNumber++)
         {
             ImVec2 textDrawOffset;
-            ImVec2 lineSize = ImGui::CalcTextSize(line.second.c_str());
-            ImGui::Text(line.second.c_str());
+            ImVec2 lineSize = ImGui::CalcTextSize(data.textLines[lineNumber].c_str());
+            float charSize = lineSize.x / data.textLines[lineNumber].size();
+            ImGui::Text(data.textLines[lineNumber].c_str());
+            float spacing = ImGui::GetTextLineHeightWithSpacing();
+            
+            textDrawOffset.y = lineNumber * spacing + spacing + padding.y;
 
-            textDrawOffset.x = lineSize.x + padding.x;
-            textDrawOffset.y = line.first * lineSize.y + lineSize.y + padding.y;
-
-            ImGui::GetWindowDrawList()->AddRect(
-                ImVec2(0, line.first * lineSize.y + padding.y),
-                textDrawOffset,
-                ImColor::ImColor(255, 255, 255, 255)
-            );
+            for(int i = 0; i < data.textLines[lineNumber].size(); i++)
+            {
+                textDrawOffset.x = charSize + charSize * i + padding.x;
+                
+                ImGui::GetWindowDrawList()->AddRect(
+                    ImVec2(
+                           charSize * i + padding.x,
+                           (lineNumber * spacing) + padding.y),
+                    textDrawOffset,
+                    ImColor(255, 255, 255, 255)
+                );
+            }
         }        
 
         ImGui::End();

@@ -66,7 +66,7 @@ endif(WIN32)
 if(UNIX)
 	message("Building for Unix...")
 
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+	#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 	add_definitions(-std=c++14)
 
 	include_directories(vendor/glfw_mac/include)

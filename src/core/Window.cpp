@@ -110,7 +110,8 @@ void Window::OnEvent(Event& event)
                     m_RenderData.GetCurrentLine().pop_back();
                     break;
                 case GLFW_KEY_ENTER:
-                    m_RenderData.GetCurrentLine() += '\n';
+                    m_RenderData.lineNumber++;
+                    m_RenderData.textLines.insert({m_RenderData.lineNumber, ""});
                     break;
             }
             
