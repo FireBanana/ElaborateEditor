@@ -12,23 +12,31 @@ struct ImguiRenderData
 	uint16_t height;
 
 	unsigned int lineNumber;
+	unsigned int cursorPositionX;
+
 	std::unordered_map<int, std::string> textLines;
 
-	ImguiRenderData() { lineNumber = 0; };
+	ImguiRenderData() 
+		: lineNumber(0), cursorPositionX(0)
+	{};
 
 	inline std::string& GetCurrentLine() { return textLines[lineNumber]; };
 };
 
 class ImguiRenderer
 {
-public:
+public:	
+	ImguiRenderer(GLFWwindow* window, ImguiRenderData* data);
 	ImguiRenderer() {};
-	ImguiRenderer(GLFWwindow* window);
+	ImguiRenderer(const ImguiRenderer&) = delete;
 
-	void Render(ImguiRenderData& data);
+	void Render();
 
 private:
 	GLFWwindow* m_Window;
+	ImguiRenderData* m_Data;
 
-	void DrawMainWindow(ImguiRenderData& datat);
+	void DrawMainWindow();
+	void DrawCursor();
+	void DebugCursorPos(int lineNumber);
 };

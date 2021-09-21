@@ -32,7 +32,7 @@ Window::Window(uint16_t width, uint16_t height)
 
     glfwSetWindowUserPointer(m_Window, this);
 
-    // Set Events
+    //========= Set Events ================================================================
 
     glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* _window, int _width, int _height) 
         {
@@ -71,15 +71,15 @@ Window::Window(uint16_t width, uint16_t height)
 
         });
 
-    //
+    // ====================================================================================
       
-    m_ImguiRenderer = ImguiRenderer(m_Window);
+    m_ImguiRenderer = ImguiRenderer(m_Window, &m_RenderData);
     m_IO = &(ImGui::GetIO());
 }
 
 void Window::Update()
 {
-    m_ImguiRenderer.Render(m_RenderData);
+    m_ImguiRenderer.Render();
 }
 
 void Window::OnEvent(Event& event)
@@ -98,6 +98,7 @@ void Window::OnEvent(Event& event)
             CharPressedEvent* e = static_cast<CharPressedEvent*>(&event);
 
             m_RenderData.GetCurrentLine() += e->Key;
+            m_RenderData.cursorPositionX++;
         });
 
     eHandler.Dispatch<KeyPressedEvent>([&]()
@@ -107,11 +108,23 @@ void Window::OnEvent(Event& event)
             switch(e->Key)
             {
                 case GLFW_KEY_BACKSPACE:
-                    m_RenderData.GetCurrentLine().pop_back();
+
+                    if (m_RenderData.GetCurrentLine().size() > 0)
+                    {
+                        m_RenderData.GetCurrentLine().pop_back();
+                    }
+                    else if (m_RenderData.lineNumber > 0)
+                    {
+                        m_RenderData.lineNumber--;
+                    }
+
                     break;
+
                 case GLFW_KEY_ENTER:
+
                     m_RenderData.lineNumber++;
                     m_RenderData.textLines.insert({m_RenderData.lineNumber, ""});
+
                     break;
             }
             

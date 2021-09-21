@@ -6,7 +6,7 @@
 
 int main(void)
 {
-	Window win = Window(1280, 720);
+	Window win(1280, 720);
 
     while (!glfwWindowShouldClose(win.GetWindow()))
     {
