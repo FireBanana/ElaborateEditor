@@ -112,10 +112,12 @@ void Window::OnEvent(Event& event)
                     if (m_RenderData.GetCurrentLine().size() > 0)
                     {
                         m_RenderData.GetCurrentLine().pop_back();
+                        m_RenderData.cursorPositionX--;
                     }
                     else if (m_RenderData.lineNumber > 0)
                     {
                         m_RenderData.lineNumber--;
+                        m_RenderData.cursorPositionX = m_RenderData.GetCurrentLine().size();
                     }
 
                     break;
@@ -123,6 +125,7 @@ void Window::OnEvent(Event& event)
                 case GLFW_KEY_ENTER:
 
                     m_RenderData.lineNumber++;
+                    m_RenderData.cursorPositionX = 0;
                     m_RenderData.textLines.insert({m_RenderData.lineNumber, ""});
 
                     break;
