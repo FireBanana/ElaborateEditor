@@ -38,6 +38,8 @@ void ImguiRenderer::DrawMainWindow()
         ImGui::SetWindowPos(ImVec2(0, 0));
         ImGui::SetWindowSize(ImVec2(m_Data->width, m_Data->height));
 
+        ImGui::SetWindowFontScale(1.0f);
+
         for (int lineNumber = 0; lineNumber < m_Data->textLines.size(); lineNumber++)
         {
             ImGui::Text(m_Data->textLines[lineNumber].c_str());
@@ -54,6 +56,7 @@ void ImguiRenderer::DrawCursor()
     ImVec2& padding =       ImGui::GetStyle().WindowPadding;
     ImVec2  textDrawOffset;
     ImVec2  lineSize =      ImGui::CalcTextSize(m_Data->GetCurrentLine().c_str());
+
     float   charSize =      ImGui::CalcTextSize("0").x;
     float   spacing =       ImGui::GetTextLineHeightWithSpacing();
 

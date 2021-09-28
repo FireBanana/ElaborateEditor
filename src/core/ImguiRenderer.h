@@ -16,16 +16,29 @@ struct ImguiRenderData
 
 	std::unordered_map<int, std::string> textLines;
 
-	ImguiRenderData() 
+	ImguiRenderData()
 		: lineNumber(0), cursorPositionX(0)
 	{};
 
-	inline std::string& GetCurrentLine() { return textLines[lineNumber]; };
+	inline std::string& GetCurrentLine() { return textLines[lineNumber]; }
+	inline std::string& GetLastLine() { return textLines[lineNumber - 1 > 0 ? lineNumber - 1 : 0]; }
+
+	inline void DeleteCurrentLine() { textLines.erase(lineNumber); }
+
+	void RetractAllLines(int startIndex)
+	{
+		for (int i = startIndex; i < textLines.size(); i++)
+		{
+			textLines[i - 1] = textLines[i];
+		}
+
+		textLines.erase(textLines.size() - 1);
+	}
 };
 
 class ImguiRenderer
 {
-public:	
+public:
 	ImguiRenderer(GLFWwindow* window, ImguiRenderData* data);
 	ImguiRenderer() {};
 	ImguiRenderer(const ImguiRenderer&) = delete;

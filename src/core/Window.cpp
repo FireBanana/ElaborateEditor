@@ -97,7 +97,10 @@ void Window::OnEvent(Event& event)
         {
             CharPressedEvent* e = static_cast<CharPressedEvent*>(&event);
 
-            m_RenderData.GetCurrentLine() += e->Key;
+            m_RenderData.GetCurrentLine().insert(
+                m_RenderData.GetCurrentLine().begin() + m_RenderData.cursorPositionX,
+                e->Key);
+
             m_RenderData.cursorPositionX++;
         });
 
@@ -109,15 +112,22 @@ void Window::OnEvent(Event& event)
             {
                 case GLFW_KEY_BACKSPACE:
 
-                    if (m_RenderData.GetCurrentLine().size() > 0)
+                    if (m_RenderData.cursorPositionX > 0)
                     {
-                        m_RenderData.GetCurrentLine().pop_back();
+                        m_RenderData.GetCurrentLine()
+                            .erase(m_RenderData.GetCurrentLine().begin() + m_RenderData.cursorPositionX - 1);
+                        
                         m_RenderData.cursorPositionX--;
                     }
                     else if (m_RenderData.lineNumber > 0)
                     {
+                        m_RenderData.cursorPositionX = m_RenderData.GetLastLine().size();
+
+                        m_RenderData.GetLastLine() += m_RenderData.GetCurrentLine();
+                        //m_RenderData.DeleteCurrentLine();
+                        m_RenderData.RetractAllLines(m_RenderData.lineNumber + 1);
+
                         m_RenderData.lineNumber--;
-                        m_RenderData.cursorPositionX = m_RenderData.GetCurrentLine().size();
                     }
 
                     break;
@@ -127,6 +137,52 @@ void Window::OnEvent(Event& event)
                     m_RenderData.lineNumber++;
                     m_RenderData.cursorPositionX = 0;
                     m_RenderData.textLines.insert({m_RenderData.lineNumber, ""});
+
+                    break;
+
+                case GLFW_KEY_LEFT:
+                    
+                    m_RenderData.cursorPositionX =
+                        (int)m_RenderData.cursorPositionX - 1 >= 0 ?
+                        (int)m_RenderData.cursorPositionX - 1 :
+                        0;
+
+                    break;
+
+                case GLFW_KEY_RIGHT:
+
+                    m_RenderData.cursorPositionX =
+                        (int)m_RenderData.cursorPositionX + 1 <= m_RenderData.GetCurrentLine().size() ?
+                        (int)m_RenderData.cursorPositionX + 1 :
+                        m_RenderData.GetCurrentLine().size();
+
+                    break;
+
+                case GLFW_KEY_UP:
+
+                    m_RenderData.lineNumber = 
+                        (int)m_RenderData.lineNumber - 1 >= 0 ?
+                        m_RenderData.lineNumber - 1 :
+                        m_RenderData.lineNumber;
+
+                    m_RenderData.cursorPositionX =
+                        m_RenderData.cursorPositionX >= m_RenderData.GetCurrentLine().size() ?
+                        m_RenderData.GetCurrentLine().size() :
+                        m_RenderData.cursorPositionX;
+
+                    break;
+
+                case GLFW_KEY_DOWN:
+
+                    m_RenderData.lineNumber = 
+                        (int)m_RenderData.lineNumber + 1 < m_RenderData.textLines.size() ?
+                        m_RenderData.lineNumber + 1 :
+                        m_RenderData.lineNumber;
+
+                    m_RenderData.cursorPositionX =
+                        m_RenderData.cursorPositionX >= m_RenderData.GetCurrentLine().size() ?
+                        m_RenderData.GetCurrentLine().size() :
+                        m_RenderData.cursorPositionX;
 
                     break;
             }
