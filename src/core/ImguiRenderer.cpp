@@ -2,6 +2,7 @@
 #include <Logger.h>
 #include <GLFW/glfw3.h>
 #include <math.h>
+#include <string>
 
 ImguiRenderer::ImguiRenderer(GLFWwindow* window, ImguiRenderData* m_Data)
     : m_Window(window), m_Data(m_Data)
@@ -40,9 +41,15 @@ void ImguiRenderer::DrawMainWindow()
 
         ImGui::SetWindowFontScale(1.0f);
 
-        for (int lineNumber = 0; lineNumber < m_Data->textLines.size(); lineNumber++)
+        for (int _lineNumber = 0; _lineNumber < m_Data->textLines.size(); _lineNumber++)
         {
-            ImGui::Text(m_Data->textLines[lineNumber].c_str());
+            ImGui::PushStyleColor(ImGuiCol_Text, {0.5f, 0.5f, 0.5f, 1.0f});
+            ImGui::Text(std::to_string(_lineNumber).c_str());
+            ImGui::PopStyleColor();
+
+            ImGui::SameLine();
+
+            ImGui::Text(m_Data->textLines[_lineNumber].c_str());
         }        
 
         DrawCursor();
@@ -61,11 +68,18 @@ void ImguiRenderer::DrawCursor()
     float   spacing =       ImGui::GetTextLineHeightWithSpacing();
 
     textDrawOffset.y =      m_Data->lineNumber * spacing + spacing + padding.y;
-    textDrawOffset.x =      1.0f + charSize * m_Data->cursorPositionX + padding.x - ImGui::GetScrollX();
+    textDrawOffset.x =      1.0f + 
+                            (charSize * (std::to_string(m_Data->lineNumber).size() + 1)) + 
+                            (charSize * m_Data->cursorPositionX) + 
+                            padding.x - 
+                            ImGui::GetScrollX();
  
     ImGui::GetWindowDrawList()->AddRect(
         ImVec2(
-            charSize * m_Data->cursorPositionX + padding.x - ImGui::GetScrollX(),
+            (charSize * m_Data->cursorPositionX) + 
+                (charSize * (std::to_string(m_Data->lineNumber).size() + 1)) + 
+                padding.x - 
+                ImGui::GetScrollX(),
             (m_Data->lineNumber * spacing) + padding.y),
         textDrawOffset,
         ImColor(255, 255, 255, sin(glfwGetTime() * 10) * 255)
