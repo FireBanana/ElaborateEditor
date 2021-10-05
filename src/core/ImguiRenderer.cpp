@@ -48,6 +48,7 @@ void ImguiRenderer::DrawMainWindow()
             ImGui::PopStyleColor();
 
             ImGui::SameLine();
+            ImGui::Spacing();
 
             ImGui::Text(m_Data->textLines[_lineNumber].c_str());
         }        

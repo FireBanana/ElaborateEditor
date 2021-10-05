@@ -22,6 +22,10 @@ struct ImguiRenderData
 
 	inline std::string& GetCurrentLine() { return textLines[lineNumber]; }
 	inline std::string& GetLastLine() { return textLines[lineNumber - 1 > 0 ? lineNumber - 1 : 0]; }
+	inline std::string& GetNextLine() 
+	{ 
+		return textLines[lineNumber + 1 < textLines.size() ? lineNumber + 1 : textLines.size()]; 
+	}
 
 	inline void DeleteCurrentLine() { textLines.erase(lineNumber); }
 
@@ -33,6 +37,16 @@ struct ImguiRenderData
 		}
 
 		textLines.erase(textLines.size() - 1);
+	}
+
+	void AdvanceAllLines(int startIndex)
+	{
+		textLines.insert({textLines.size(), ""});
+
+		for (int i = textLines.size() - 1; i >= startIndex; i--)
+		{
+			textLines[i] = textLines[i - 1];
+		}
 	}
 };
 

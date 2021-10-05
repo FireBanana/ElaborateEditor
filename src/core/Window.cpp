@@ -6,186 +6,202 @@
 
 Window::Window(uint16_t width, uint16_t height)
 {
-    if (!glfwInit())
-        LOG_ERROR("Glfw failed to initialize");
+	if (!glfwInit())
+		LOG_ERROR("Glfw failed to initialize");
 
-    //Required for deploying on Mac
-    glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    
-    m_Window = glfwCreateWindow(width, height, "Elaborate Editor", NULL, NULL);
+	//Required for deploying on Mac
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    if (!m_Window)
-    {
-        glfwTerminate();
-        LOG_ERROR("Glfw failed to initialize");
-    }
+	m_Window = glfwCreateWindow(width, height, "Elaborate Editor", NULL, NULL);
 
-    glfwMakeContextCurrent(m_Window);
+	if (!m_Window)
+	{
+		glfwTerminate();
+		LOG_ERROR("Glfw failed to initialize");
+	}
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        LOG_ERROR("Failed to initialize opengl context");
-    }
+	glfwMakeContextCurrent(m_Window);
 
-    glfwSetWindowUserPointer(m_Window, this);
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		LOG_ERROR("Failed to initialize opengl context");
+	}
 
-    //========= Set Events ================================================================
+	glfwSetWindowUserPointer(m_Window, this);
 
-    glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* _window, int _width, int _height) 
-        {
-            Window* w = (Window*)glfwGetWindowUserPointer(_window);
+	//========= Set Events ================================================================
 
-            WindowResizeEvent e;
-            e.Width = _width;
-            e.Height = _height;
+	glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* _window, int _width, int _height)
+		{
+			Window* w = (Window*)glfwGetWindowUserPointer(_window);
 
-            w->OnEvent(e);
-        });
+			WindowResizeEvent e;
+			e.Width = _width;
+			e.Height = _height;
 
-    glfwSetKeyCallback(m_Window, [](GLFWwindow* _window, int _key, int _scancode, int _action, int _mods)
-        {
-            if (_action != GLFW_PRESS || _mods != 0)
-                return;
+			w->OnEvent(e);
+		});
 
-            Window* w = (Window*)glfwGetWindowUserPointer(_window);
+	glfwSetKeyCallback(m_Window, [](GLFWwindow* _window, int _key, int _scancode, int _action, int _mods)
+		{
+			if (_action != GLFW_PRESS || _mods != 0)
+				return;
 
-            KeyPressedEvent e;
-            e.Key = _key;
-            e.Mods = _mods;
+			Window* w = (Window*)glfwGetWindowUserPointer(_window);
 
-            w->OnEvent(e);
-        });
+			KeyPressedEvent e;
+			e.Key = _key;
+			e.Mods = _mods;
 
-    glfwSetCharCallback(m_Window, [](GLFWwindow* _window, unsigned int codepoint) 
-        {
-            
-            Window* w = (Window*)glfwGetWindowUserPointer(_window);
+			w->OnEvent(e);
+		});
 
-            CharPressedEvent e;
-            e.Key = codepoint;
+	glfwSetCharCallback(m_Window, [](GLFWwindow* _window, unsigned int codepoint)
+		{
 
-            w->OnEvent(e);
+			Window* w = (Window*)glfwGetWindowUserPointer(_window);
 
-        });
+			CharPressedEvent e;
+			e.Key = codepoint;
 
-    // ====================================================================================
-      
-    m_ImguiRenderer = ImguiRenderer(m_Window, &m_RenderData);
-    m_IO = &(ImGui::GetIO());
+			w->OnEvent(e);
+
+		});
+
+	// ====================================================================================
+
+	m_ImguiRenderer = ImguiRenderer(m_Window, &m_RenderData);
+	m_IO = &(ImGui::GetIO());
 }
 
 void Window::Update()
 {
-    m_ImguiRenderer.Render();
+	m_ImguiRenderer.Render();
 }
 
 void Window::OnEvent(Event& event)
 {
-    EventHandler eHandler(event);
+	EventHandler eHandler(event);
 
-    eHandler.Dispatch<WindowResizeEvent>([&]() 
-        {
-            WindowResizeEvent* e = static_cast<WindowResizeEvent*>(&event);
-            m_RenderData.width = e->Width;
-            m_RenderData.height = e->Height;
-        });
+	eHandler.Dispatch<WindowResizeEvent>([&]()
+		{
+			WindowResizeEvent* e = static_cast<WindowResizeEvent*>(&event);
+			m_RenderData.width = e->Width;
+			m_RenderData.height = e->Height;
+		});
 
-    eHandler.Dispatch<CharPressedEvent>([&]()
-        {
-            CharPressedEvent* e = static_cast<CharPressedEvent*>(&event);
+	eHandler.Dispatch<CharPressedEvent>([&]()
+		{
+			CharPressedEvent* e = static_cast<CharPressedEvent*>(&event);
 
-            m_RenderData.GetCurrentLine().insert(
-                m_RenderData.GetCurrentLine().begin() + m_RenderData.cursorPositionX,
-                e->Key);
+			m_RenderData.GetCurrentLine().insert(
+				m_RenderData.GetCurrentLine().begin() + m_RenderData.cursorPositionX,
+				e->Key);
 
-            m_RenderData.cursorPositionX++;
-        });
+			m_RenderData.cursorPositionX++;
+		});
 
-    eHandler.Dispatch<KeyPressedEvent>([&]()
-        {
-            KeyPressedEvent* e = static_cast<KeyPressedEvent*>(&event);
-        
-            switch(e->Key)
-            {
-                case GLFW_KEY_BACKSPACE:
+	eHandler.Dispatch<KeyPressedEvent>([&]()
+		{
+			KeyPressedEvent* e = static_cast<KeyPressedEvent*>(&event);
 
-                    if (m_RenderData.cursorPositionX > 0)
-                    {
-                        m_RenderData.GetCurrentLine()
-                            .erase(m_RenderData.GetCurrentLine().begin() + m_RenderData.cursorPositionX - 1);
-                        
-                        m_RenderData.cursorPositionX--;
-                    }
-                    else if (m_RenderData.lineNumber > 0)
-                    {
-                        m_RenderData.cursorPositionX = m_RenderData.GetLastLine().size();
+			switch (e->Key)
+			{
+			case GLFW_KEY_BACKSPACE:
 
-                        m_RenderData.GetLastLine() += m_RenderData.GetCurrentLine();
-                        //m_RenderData.DeleteCurrentLine();
-                        m_RenderData.RetractAllLines(m_RenderData.lineNumber + 1);
+				if (m_RenderData.cursorPositionX > 0)
+				{
+					m_RenderData.GetCurrentLine()
+						.erase(m_RenderData.GetCurrentLine().begin() + m_RenderData.cursorPositionX - 1);
 
-                        m_RenderData.lineNumber--;
-                    }
+					m_RenderData.cursorPositionX--;
+				}
+				else if (m_RenderData.lineNumber > 0)
+				{
+					m_RenderData.cursorPositionX = m_RenderData.GetLastLine().size();
 
-                    break;
+					m_RenderData.GetLastLine() += m_RenderData.GetCurrentLine();
+					m_RenderData.RetractAllLines(m_RenderData.lineNumber + 1);
 
-                case GLFW_KEY_ENTER:
+					m_RenderData.lineNumber--;
+				}
 
-                    m_RenderData.lineNumber++;
-                    m_RenderData.cursorPositionX = 0;
-                    m_RenderData.textLines.insert({m_RenderData.lineNumber, ""});
+				break;
 
-                    break;
+			case GLFW_KEY_ENTER:
+				m_RenderData.lineNumber++;
 
-                case GLFW_KEY_LEFT:
-                    
-                    m_RenderData.cursorPositionX =
-                        (int)m_RenderData.cursorPositionX - 1 >= 0 ?
-                        (int)m_RenderData.cursorPositionX - 1 :
-                        0;
+				if (m_RenderData.lineNumber - 1 < m_RenderData.textLines.size() - 1)
+				{
+					m_RenderData.AdvanceAllLines(m_RenderData.lineNumber + 1);
 
-                    break;
+					m_RenderData.GetCurrentLine() =
+						m_RenderData.GetLastLine().substr(
+							m_RenderData.cursorPositionX, m_RenderData.GetLastLine().size()
+						);
 
-                case GLFW_KEY_RIGHT:
+					m_RenderData.GetLastLine().erase(
+						m_RenderData.cursorPositionX,
+						m_RenderData.GetLastLine().size());
+				}
+				else
+				{
+					m_RenderData.textLines.insert({ m_RenderData.lineNumber, "" });					
+				}
 
-                    m_RenderData.cursorPositionX =
-                        (int)m_RenderData.cursorPositionX + 1 <= m_RenderData.GetCurrentLine().size() ?
-                        (int)m_RenderData.cursorPositionX + 1 :
-                        m_RenderData.GetCurrentLine().size();
+				m_RenderData.cursorPositionX = 0;
 
-                    break;
+				break;
 
-                case GLFW_KEY_UP:
+			case GLFW_KEY_LEFT:
 
-                    m_RenderData.lineNumber = 
-                        (int)m_RenderData.lineNumber - 1 >= 0 ?
-                        m_RenderData.lineNumber - 1 :
-                        m_RenderData.lineNumber;
+				m_RenderData.cursorPositionX =
+					(int)m_RenderData.cursorPositionX - 1 >= 0 ?
+					(int)m_RenderData.cursorPositionX - 1 :
+					0;
 
-                    m_RenderData.cursorPositionX =
-                        m_RenderData.cursorPositionX >= m_RenderData.GetCurrentLine().size() ?
-                        m_RenderData.GetCurrentLine().size() :
-                        m_RenderData.cursorPositionX;
+				break;
 
-                    break;
+			case GLFW_KEY_RIGHT:
 
-                case GLFW_KEY_DOWN:
+				m_RenderData.cursorPositionX =
+					(int)m_RenderData.cursorPositionX + 1 <= m_RenderData.GetCurrentLine().size() ?
+					(int)m_RenderData.cursorPositionX + 1 :
+					m_RenderData.GetCurrentLine().size();
 
-                    m_RenderData.lineNumber = 
-                        (int)m_RenderData.lineNumber + 1 < m_RenderData.textLines.size() ?
-                        m_RenderData.lineNumber + 1 :
-                        m_RenderData.lineNumber;
+				break;
 
-                    m_RenderData.cursorPositionX =
-                        m_RenderData.cursorPositionX >= m_RenderData.GetCurrentLine().size() ?
-                        m_RenderData.GetCurrentLine().size() :
-                        m_RenderData.cursorPositionX;
+			case GLFW_KEY_UP:
 
-                    break;
-            }
-            
-        });
+				m_RenderData.lineNumber =
+					(int)m_RenderData.lineNumber - 1 >= 0 ?
+					m_RenderData.lineNumber - 1 :
+					m_RenderData.lineNumber;
+
+				m_RenderData.cursorPositionX =
+					m_RenderData.cursorPositionX >= m_RenderData.GetCurrentLine().size() ?
+					m_RenderData.GetCurrentLine().size() :
+					m_RenderData.cursorPositionX;
+
+				break;
+
+			case GLFW_KEY_DOWN:
+
+				m_RenderData.lineNumber =
+					(int)m_RenderData.lineNumber + 1 < m_RenderData.textLines.size() ?
+					m_RenderData.lineNumber + 1 :
+					m_RenderData.lineNumber;
+
+				m_RenderData.cursorPositionX =
+					m_RenderData.cursorPositionX >= m_RenderData.GetCurrentLine().size() ?
+					m_RenderData.GetCurrentLine().size() :
+					m_RenderData.cursorPositionX;
+
+				break;
+			}
+
+		});
 }
