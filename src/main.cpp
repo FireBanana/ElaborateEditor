@@ -18,5 +18,3 @@ int main(void)
         glfwSwapBuffers(win.GetWindow());
     }
 }
-
-

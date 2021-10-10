@@ -6,64 +6,27 @@
 #include <imgui_impl_opengl3.h>
 #include <unordered_map>
 
-struct ImguiRenderData
+#include "TextWindow.h"
+
+struct WindowData
 {
-	uint16_t width;
-	uint16_t height;
-
-	unsigned int lineNumber;
-	unsigned int cursorPositionX;
-
-	std::unordered_map<int, std::string> textLines;
-
-	ImguiRenderData()
-		: lineNumber(0), cursorPositionX(0)
-	{};
-
-	inline std::string& GetCurrentLine() { return textLines[lineNumber]; }
-	inline std::string& GetLastLine() { return textLines[lineNumber - 1 > 0 ? lineNumber - 1 : 0]; }
-	inline std::string& GetNextLine() 
-	{ 
-		return textLines[lineNumber + 1 < textLines.size() ? lineNumber + 1 : textLines.size()]; 
-	}
-
-	inline void DeleteCurrentLine() { textLines.erase(lineNumber); }
-
-	void RetractAllLines(int startIndex)
-	{
-		for (int i = startIndex; i < textLines.size(); i++)
-		{
-			textLines[i - 1] = textLines[i];
-		}
-
-		textLines.erase(textLines.size() - 1);
-	}
-
-	void AdvanceAllLines(int startIndex)
-	{
-		textLines.insert({textLines.size(), ""});
-
-		for (int i = textLines.size() - 1; i >= startIndex; i--)
-		{
-			textLines[i] = textLines[i - 1];
-		}
-	}
+	uint16_t width, height;
 };
 
 class ImguiRenderer
 {
 public:
-	ImguiRenderer(GLFWwindow* window, ImguiRenderData* data);
+	ImguiRenderer(GLFWwindow* window, WindowData* data);
 	ImguiRenderer() {};
 	ImguiRenderer(const ImguiRenderer&) = delete;
 
 	void Render();
+	void OnEvent(Event& event);
 
 private:
 	GLFWwindow* m_Window;
-	ImguiRenderData* m_Data;
+	WindowData* m_Data;
 
-	void DrawMainWindow();
-	void DrawCursor();
-	void DebugCursorPos(int lineNumber);
+	TextWindow m_VertexShaderWindow;
+	TextWindow m_FragmentShaderWindow;
 };

@@ -73,13 +73,19 @@ Window::Window(uint16_t width, uint16_t height)
 
 	// ====================================================================================
 
-	m_ImguiRenderer = ImguiRenderer(m_Window, &m_RenderData);
+	m_ImguiRenderer = new ImguiRenderer(m_Window, &m_ImguiWindowData);
 	m_IO = &(ImGui::GetIO());
+}
+
+Window::~Window()
+{
+	delete m_ImguiRenderer;
+	m_ImguiRenderer = nullptr;
 }
 
 void Window::Update()
 {
-	m_ImguiRenderer.Render();
+	m_ImguiRenderer->Render();
 }
 
 void Window::OnEvent(Event& event)
@@ -89,119 +95,9 @@ void Window::OnEvent(Event& event)
 	eHandler.Dispatch<WindowResizeEvent>([&]()
 		{
 			WindowResizeEvent* e = static_cast<WindowResizeEvent*>(&event);
-			m_RenderData.width = e->Width;
-			m_RenderData.height = e->Height;
+			m_ImguiWindowData.width = e->Width;
+			m_ImguiWindowData.height = e->Height;
 		});
 
-	eHandler.Dispatch<CharPressedEvent>([&]()
-		{
-			CharPressedEvent* e = static_cast<CharPressedEvent*>(&event);
-
-			m_RenderData.GetCurrentLine().insert(
-				m_RenderData.GetCurrentLine().begin() + m_RenderData.cursorPositionX,
-				e->Key);
-
-			m_RenderData.cursorPositionX++;
-		});
-
-	eHandler.Dispatch<KeyPressedEvent>([&]()
-		{
-			KeyPressedEvent* e = static_cast<KeyPressedEvent*>(&event);
-
-			switch (e->Key)
-			{
-			case GLFW_KEY_BACKSPACE:
-
-				if (m_RenderData.cursorPositionX > 0)
-				{
-					m_RenderData.GetCurrentLine()
-						.erase(m_RenderData.GetCurrentLine().begin() + m_RenderData.cursorPositionX - 1);
-
-					m_RenderData.cursorPositionX--;
-				}
-				else if (m_RenderData.lineNumber > 0)
-				{
-					m_RenderData.cursorPositionX = m_RenderData.GetLastLine().size();
-
-					m_RenderData.GetLastLine() += m_RenderData.GetCurrentLine();
-					m_RenderData.RetractAllLines(m_RenderData.lineNumber + 1);
-
-					m_RenderData.lineNumber--;
-				}
-
-				break;
-
-			case GLFW_KEY_ENTER:
-				m_RenderData.lineNumber++;
-
-				if (m_RenderData.lineNumber - 1 < m_RenderData.textLines.size() - 1)
-				{
-					m_RenderData.AdvanceAllLines(m_RenderData.lineNumber + 1);
-
-					m_RenderData.GetCurrentLine() =
-						m_RenderData.GetLastLine().substr(
-							m_RenderData.cursorPositionX, m_RenderData.GetLastLine().size()
-						);
-
-					m_RenderData.GetLastLine().erase(
-						m_RenderData.cursorPositionX,
-						m_RenderData.GetLastLine().size());
-				}
-				else
-				{
-					m_RenderData.textLines.insert({ m_RenderData.lineNumber, "" });					
-				}
-
-				m_RenderData.cursorPositionX = 0;
-
-				break;
-
-			case GLFW_KEY_LEFT:
-
-				m_RenderData.cursorPositionX =
-					(int)m_RenderData.cursorPositionX - 1 >= 0 ?
-					(int)m_RenderData.cursorPositionX - 1 :
-					0;
-
-				break;
-
-			case GLFW_KEY_RIGHT:
-
-				m_RenderData.cursorPositionX =
-					(int)m_RenderData.cursorPositionX + 1 <= m_RenderData.GetCurrentLine().size() ?
-					(int)m_RenderData.cursorPositionX + 1 :
-					m_RenderData.GetCurrentLine().size();
-
-				break;
-
-			case GLFW_KEY_UP:
-
-				m_RenderData.lineNumber =
-					(int)m_RenderData.lineNumber - 1 >= 0 ?
-					m_RenderData.lineNumber - 1 :
-					m_RenderData.lineNumber;
-
-				m_RenderData.cursorPositionX =
-					m_RenderData.cursorPositionX >= m_RenderData.GetCurrentLine().size() ?
-					m_RenderData.GetCurrentLine().size() :
-					m_RenderData.cursorPositionX;
-
-				break;
-
-			case GLFW_KEY_DOWN:
-
-				m_RenderData.lineNumber =
-					(int)m_RenderData.lineNumber + 1 < m_RenderData.textLines.size() ?
-					m_RenderData.lineNumber + 1 :
-					m_RenderData.lineNumber;
-
-				m_RenderData.cursorPositionX =
-					m_RenderData.cursorPositionX >= m_RenderData.GetCurrentLine().size() ?
-					m_RenderData.GetCurrentLine().size() :
-					m_RenderData.cursorPositionX;
-
-				break;
-			}
-
-		});
+	m_ImguiRenderer->OnEvent(event);
 }

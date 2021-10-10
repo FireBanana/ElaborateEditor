@@ -14,6 +14,7 @@ class Window
 public:
 	Window(uint16_t width, uint16_t height);
 	Window(const Window&) = delete;
+	~Window();
 
 	void Update();
 	void OnEvent(Event& event);
@@ -24,7 +25,7 @@ public:
 private:
 	GLFWwindow* m_Window;
 	ImGuiIO* m_IO;
+	ImguiRenderer* m_ImguiRenderer;
 
-	ImguiRenderer m_ImguiRenderer;
-	ImguiRenderData m_RenderData;
+	WindowData m_ImguiWindowData;
 };

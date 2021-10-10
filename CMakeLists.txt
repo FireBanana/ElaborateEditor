@@ -26,6 +26,8 @@ add_executable(ElaborateEditor
 	src/core/events/CharPressedEvent.h
 	src/core/ImguiRenderer.cpp
 	src/core/ImguiRenderer.h
+	src/core/TextWindow.h
+	src/core/TextWindow.cpp
 
 	vendor/glad/src/glad.c
 	vendor/imgui/imgui.cpp
@@ -43,7 +45,9 @@ source_group("src/core" FILES
 	src/core/Window.cpp
 	src/core/Window.h
 	src/core/ImguiRenderer.cpp
-	src/core/ImguiRenderer.h)
+	src/core/ImguiRenderer.h
+	src/core/TextWindow.h
+	src/core/TextWindow.cpp)
 
 source_group("src/core/events" FILES
 	src/core/events/Event.h
@@ -64,7 +68,7 @@ if(WIN32)
 endif(WIN32)
 
 if(UNIX)
-	message("Building for Unix...")
+	message("Building for MacOS...")
 
 	#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 	add_definitions(-std=c++14)
