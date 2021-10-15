@@ -28,6 +28,10 @@ add_executable(ElaborateEditor
 	src/core/ImguiRenderer.h
 	src/core/TextWindow.h
 	src/core/TextWindow.cpp
+	src/core/Buffer.h
+	src/core/Buffer.cpp
+	src/core/Shader.h
+	src/core/Shader.cpp
 
 	vendor/glad/src/glad.c
 	vendor/imgui/imgui.cpp
@@ -47,7 +51,11 @@ source_group("src/core" FILES
 	src/core/ImguiRenderer.cpp
 	src/core/ImguiRenderer.h
 	src/core/TextWindow.h
-	src/core/TextWindow.cpp)
+	src/core/TextWindow.cpp
+	src/core/Buffer.h
+	src/core/Buffer.cpp
+	src/core/Shader.h
+	src/core/Shader.cpp)
 
 source_group("src/core/events" FILES
 	src/core/events/Event.h
