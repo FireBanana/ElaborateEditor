@@ -34,7 +34,7 @@ TextWindow::TextWindow(std::string name) :
 
 void TextWindow::Draw()
 {
-	if (ImGui::Begin(m_Name.c_str(), false,
+	if (ImGui::Begin(m_Name.c_str(), nullptr,
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_HorizontalScrollbar))

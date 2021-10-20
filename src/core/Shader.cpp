@@ -1,6 +1,8 @@
 #include "Shader.h"
 #include "Logger.h"
 
+#include <string>
+
 Shader::Shader(const char* vertexSource, const char* fragmentSource)
 {
     std::ifstream vShaderFile;
@@ -34,6 +36,19 @@ Shader::Shader(const char* vertexSource, const char* fragmentSource)
     CreateProgram();
     DeleteShaders();
     Use();
+}
+
+void Shader::Draw(const Buffer<float>& vertexBuffer, const Buffer<int>& elementBuffer)
+{
+    elementBuffer.Bind();
+    vertexBuffer.Bind();
+    
+    glDrawElements(
+        GL_TRIANGLES,
+        elementBuffer.GetSize(),
+        GL_UNSIGNED_INT,
+        0
+    );
 }
 
 void Shader::CreateShaders()

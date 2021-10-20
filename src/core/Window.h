@@ -7,7 +7,8 @@
 #include <imgui_impl_opengl3.h>
 
 #include "events/Event.h"
-#include "ImguiRenderer.h"
+#include "gui/ImguiRenderer.h"
+#include "ViewportRenderer.h"
 
 class Window
 {
@@ -26,6 +27,7 @@ private:
 	GLFWwindow* m_Window;
 	ImGuiIO* m_IO;
 	ImguiRenderer* m_ImguiRenderer;
+	ViewportRenderer* m_ViewportRenderer;
 
 	WindowData m_ImguiWindowData;
 };

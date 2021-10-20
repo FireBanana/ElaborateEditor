@@ -4,6 +4,8 @@
 #include <iostream>
 #include <glad/glad.h>
 
+#include "Buffer.h"
+
 class Shader
 {
 public:
@@ -11,6 +13,8 @@ public:
 	Shader(const char* vertexSource, const char* fragmentSource);
 
 	inline void Use() { glUseProgram(m_Id); };
+
+	void Draw(const Buffer<float>& vertexBuffer, const Buffer<int>& elementBuffer);
 
 private:
 

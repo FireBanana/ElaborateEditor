@@ -10,6 +10,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 include_directories(vendor/glad/include)
 include_directories(vendor/imgui)
 include_directories(vendor/imgui/backends)
+include_directories(vendor/glm/glm)
 
 include_directories(src/core/)
 include_directories(src/util/)
@@ -24,14 +25,17 @@ add_executable(ElaborateEditor
 	src/core/events/WindowResizeEvent.h
 	src/core/events/KeyPressedEvent.h
 	src/core/events/CharPressedEvent.h
-	src/core/ImguiRenderer.cpp
-	src/core/ImguiRenderer.h
-	src/core/TextWindow.h
-	src/core/TextWindow.cpp
+	src/core/gui/ImguiRenderer.cpp
+	src/core/gui/ImguiRenderer.h
+	src/core/gui/TextWindow.h
+	src/core/gui/TextWindow.cpp
 	src/core/Buffer.h
-	src/core/Buffer.cpp
+	src/core/VertexArray.h
+	src/core/VertexArray.cpp
 	src/core/Shader.h
 	src/core/Shader.cpp
+	src/core/ViewportRenderer.h
+	src/core/ViewportRenderer.cpp
 
 	vendor/glad/src/glad.c
 	vendor/imgui/imgui.cpp
@@ -48,14 +52,19 @@ source_group("src/" FILES
 source_group("src/core" FILES
 	src/core/Window.cpp
 	src/core/Window.h
-	src/core/ImguiRenderer.cpp
-	src/core/ImguiRenderer.h
-	src/core/TextWindow.h
-	src/core/TextWindow.cpp
 	src/core/Buffer.h
-	src/core/Buffer.cpp
+	src/core/VertexArray.h
+	src/core/VertexArray.cpp
 	src/core/Shader.h
-	src/core/Shader.cpp)
+	src/core/Shader.cpp
+	src/core/ViewportRenderer.h
+	src/core/ViewportRenderer.cpp)
+
+source_group("src/core/gui" FILES
+	src/core/gui/ImguiRenderer.cpp
+	src/core/gui/ImguiRenderer.h
+	src/core/gui/TextWindow.h
+	src/core/gui/TextWindow.cpp)
 
 source_group("src/core/events" FILES
 	src/core/events/Event.h

@@ -74,6 +74,8 @@ Window::Window(uint16_t width, uint16_t height)
 	// ====================================================================================
 
 	m_ImguiRenderer = new ImguiRenderer(m_Window, &m_ImguiWindowData);
+	m_ViewportRenderer = new ViewportRenderer(300, 300);
+
 	m_IO = &(ImGui::GetIO());
 }
 
@@ -86,6 +88,7 @@ Window::~Window()
 void Window::Update()
 {
 	m_ImguiRenderer->Render();
+	m_ViewportRenderer->Render();
 }
 
 void Window::OnEvent(Event& event)
