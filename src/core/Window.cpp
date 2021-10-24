@@ -31,6 +31,7 @@ Window::Window(uint16_t width, uint16_t height)
 	}
 
 	glfwSetWindowUserPointer(m_Window, this);
+	glViewport(0, 0, width, height);
 
 	//========= Set Events ================================================================
 
@@ -74,7 +75,7 @@ Window::Window(uint16_t width, uint16_t height)
 	// ====================================================================================
 
 	m_ImguiRenderer = new ImguiRenderer(m_Window, &m_ImguiWindowData);
-	m_ViewportRenderer = new ViewportRenderer(300, 300);
+	m_ViewportRenderer = new ViewportRenderer(&m_ViewportRenderData);
 
 	m_IO = &(ImGui::GetIO());
 }
@@ -100,7 +101,11 @@ void Window::OnEvent(Event& event)
 			WindowResizeEvent* e = static_cast<WindowResizeEvent*>(&event);
 			m_ImguiWindowData.width = e->Width;
 			m_ImguiWindowData.height = e->Height;
+
+			m_ViewportRenderData.width = e->Width;
+			m_ViewportRenderData.height = e->Height;
 		});
 
 	m_ImguiRenderer->OnEvent(event);
+	m_ViewportRenderer->OnEvent(event);
 }

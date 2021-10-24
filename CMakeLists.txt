@@ -5,7 +5,7 @@ set(CMAKE_SUPPRESS_REGENERATION true)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin/)
 set(CMAKE_RUNTIME_LIBRARY_DIRECTORY bin/)
 
-set_property(GLOBAL PROPERTY USE_FOLDERS ON) 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 include_directories(vendor/glad/include)
 include_directories(vendor/imgui)
@@ -75,8 +75,16 @@ source_group("src/core/events" FILES
 source_group("src/util" FILES 
 	src/util/Logger.h)
 
+add_custom_command(TARGET ElaborateEditor POST_BUILD
+                   COMMAND "${CMAKE_COMMAND}" 
+		  -E copy_directory "${CMAKE_SOURCE_DIR}/viewport-shaders" "${CMAKE_BINARY_DIR}/bin/$<CONFIG>/viewport-shaders")
+
 if(WIN32)
 	message("Building for Win32...")
+
+	set_target_properties(
+    		ElaborateEditor PROPERTIES
+    		VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin/$<CONFIG>/")
 
 	include_directories(vendor/glfw_win/include)
 	target_link_libraries(ElaborateEditor
@@ -97,3 +105,5 @@ if(UNIX)
 	target_link_libraries(ElaborateEditor
 		"-framework OpenGL" "-framework Cocoa" "-framework IOKit")
 endif(UNIX)
+
+#file(COPY viewport-shaders DESTINATION bin/"${Configuration}")

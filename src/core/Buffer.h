@@ -87,11 +87,6 @@ void Buffer<T>::SetAttributes()
 
 		glEnableVertexAttribArray(item.Index);
 
-		LOG_INFO("Stride size: " + std::to_string(m_StrideSize * sizeof(float)));
-		LOG_INFO("Current index: " + std::to_string(item.Index));
-		LOG_INFO("Current span: " + std::to_string(item.Span));
-		LOG_INFO("Span pointer: " + std::to_string(sizeof(float) * currentSpan));
-
 		currentSpan += item.Span;
 	}
 }

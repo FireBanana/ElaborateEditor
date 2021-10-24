@@ -1,12 +1,11 @@
 #include "ViewportRenderer.h"
 #include "Logger.h"
+#include "WindowResizeEvent.h"
 
-ViewportRenderer::ViewportRenderer(uint16_t width, uint16_t height)
-	: m_DefaultShader("C:\\Users\\mowai\\Desktop\\vertex.vs", "C:\\Users\\mowai\\Desktop\\fragment.fs")
+ViewportRenderer::ViewportRenderer(ViewportRenderData* data)
+	: m_DefaultShader("viewport-shaders\\vertex.vs", "viewport-shaders\\fragment.fs"),
+	m_RenderData(data)
 {
-	m_RenderData.width = width;
-	m_RenderData.height = height;
-
 	m_VertexArray.Bind();
 	
 	m_VertexBuffer.Set(GL_ARRAY_BUFFER);
@@ -14,10 +13,10 @@ ViewportRenderer::ViewportRenderer(uint16_t width, uint16_t height)
 
 	m_VertexBuffer.PushData(
 		{
-			-0.5f, 0.5f,
-			 0.5f, 0.5f,
-			-0.5f, -0.5f,
-			 0.5f, -0.5f
+			 0.0f, 1.0f,
+			 1.0f, 1.0f,
+			 0.0f, -1.0f,
+			 1.0f, -1.0f
 		});
 
 	m_ElementBuffer.PushData(
@@ -34,4 +33,15 @@ ViewportRenderer::ViewportRenderer(uint16_t width, uint16_t height)
 void ViewportRenderer::Render()
 {
 	m_DefaultShader.Draw(m_VertexBuffer, m_ElementBuffer);
+}
+
+void ViewportRenderer::OnEvent(Event& event)
+{
+	EventHandler eHandler(event);
+
+	eHandler.Dispatch<WindowResizeEvent>([&]()
+		{
+			WindowResizeEvent* e = static_cast<WindowResizeEvent*>(&event);
+			glViewport(0, 0, e->Width, e->Height);
+		});
 }

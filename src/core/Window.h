@@ -29,5 +29,6 @@ private:
 	ImguiRenderer* m_ImguiRenderer;
 	ViewportRenderer* m_ViewportRenderer;
 
-	WindowData m_ImguiWindowData;
+	ImguiWindowData m_ImguiWindowData;
+	ViewportRenderData m_ViewportRenderData;
 };

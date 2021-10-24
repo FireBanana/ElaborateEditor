@@ -5,7 +5,7 @@
 #include <string>
 #include <events/WindowResizeEvent.h>
 
-ImguiRenderer::ImguiRenderer(GLFWwindow* window, WindowData* m_Data)
+ImguiRenderer::ImguiRenderer(GLFWwindow* window, ImguiWindowData* m_Data)
     : m_Window(window), m_Data(m_Data),
     m_VertexShaderWindow("Vertex"),
     m_FragmentShaderWindow("Fragment")

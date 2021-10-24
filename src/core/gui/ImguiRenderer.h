@@ -8,7 +8,7 @@
 
 #include "TextWindow.h"
 
-struct WindowData
+struct ImguiWindowData
 {
 	uint16_t width, height;
 };
@@ -16,7 +16,7 @@ struct WindowData
 class ImguiRenderer
 {
 public:
-	ImguiRenderer(GLFWwindow* window, WindowData* data);
+	ImguiRenderer(GLFWwindow* window, ImguiWindowData* data);
 	ImguiRenderer() {};
 	ImguiRenderer(const ImguiRenderer&) = delete;
 
@@ -25,7 +25,7 @@ public:
 
 private:
 	GLFWwindow* m_Window;
-	WindowData* m_Data;
+	ImguiWindowData* m_Data;
 
 	TextWindow m_VertexShaderWindow;
 	TextWindow m_FragmentShaderWindow;
