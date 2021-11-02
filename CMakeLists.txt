@@ -36,6 +36,9 @@ add_executable(ElaborateEditor
 	src/core/Shader.cpp
 	src/core/ViewportRenderer.h
 	src/core/ViewportRenderer.cpp
+	src/core/Camera.h
+	src/core/Camera.cpp
+	src/core/VisualObject.h
 
 	vendor/glad/src/glad.c
 	vendor/imgui/imgui.cpp
@@ -58,7 +61,10 @@ source_group("src/core" FILES
 	src/core/Shader.h
 	src/core/Shader.cpp
 	src/core/ViewportRenderer.h
-	src/core/ViewportRenderer.cpp)
+	src/core/ViewportRenderer.cpp
+	src/core/Camera.h
+	src/core/Camera.cpp
+	src/core/VisualObject.h)
 
 source_group("src/core/gui" FILES
 	src/core/gui/ImguiRenderer.cpp
@@ -77,7 +83,7 @@ source_group("src/util" FILES
 
 add_custom_command(TARGET ElaborateEditor POST_BUILD
                    COMMAND "${CMAKE_COMMAND}" 
-		  -E copy_directory "${CMAKE_SOURCE_DIR}/viewport-shaders" "${CMAKE_BINARY_DIR}/bin/$<CONFIG>/viewport-shaders")
+		  -E copy_directory "${CMAKE_SOURCE_DIR}/shaders" "${CMAKE_BINARY_DIR}/bin/$<CONFIG>/shaders")
 
 if(WIN32)
 	message("Building for Win32...")
@@ -105,5 +111,3 @@ if(UNIX)
 	target_link_libraries(ElaborateEditor
 		"-framework OpenGL" "-framework Cocoa" "-framework IOKit")
 endif(UNIX)
-
-#file(COPY viewport-shaders DESTINATION bin/"${Configuration}")

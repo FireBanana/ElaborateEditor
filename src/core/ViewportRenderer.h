@@ -6,6 +6,8 @@
 #include "Shader.h"
 #include "VertexArray.h"
 #include "Event.h"
+#include "Camera.h"
+#include "VisualObject.h"
 
 struct ViewportRenderData
 {
@@ -27,8 +29,14 @@ private:
 
 	ViewportRenderData* m_RenderData;
 
-	Buffer<float> m_VertexBuffer;
-	Buffer<int> m_ElementBuffer;
-	VertexArray m_VertexArray;
+	VisualObject m_Viewport;
+	VisualObject m_Cube;
+
+	VertexArray m_2DVertexArray;
+	VertexArray m_3DVertexArray;
+
+	Shader m_BackgroundShader;				
 	Shader m_DefaultShader;
+
+	Camera m_Camera;
 };

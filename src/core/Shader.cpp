@@ -51,6 +51,12 @@ void Shader::Draw(const Buffer<float>& vertexBuffer, const Buffer<int>& elementB
     );
 }
 
+void Shader::SetUniformFloat4(const char* name, const glm::mat4& matrix)
+{
+    int modelLoc = glGetUniformLocation(m_Id, name);
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
 void Shader::CreateShaders()
 {
     const char* vc = m_VertexCode.c_str();

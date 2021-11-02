@@ -31,7 +31,7 @@ Window::Window(uint16_t width, uint16_t height)
 	}
 
 	glfwSetWindowUserPointer(m_Window, this);
-	glViewport(0, 0, width, height);
+	glViewport(width / 2.0f, 0, width / 2.0f, height);
 
 	//========= Set Events ================================================================
 
