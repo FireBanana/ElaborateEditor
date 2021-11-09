@@ -16,7 +16,8 @@ public:
 
 	inline void Use() { glUseProgram(m_Id); };
 
-	void Draw(const Buffer<float>& vertexBuffer, const Buffer<int>& elementBuffer);
+	void DrawIndexed(const Buffer<float>& vertexBuffer, const Buffer<int>& elementBuffer);
+	void Draw(const Buffer<float>& vertexBuffer, int count);
 	void SetUniformFloat4(const char* name, const glm::mat4& matrix);
 
 private:

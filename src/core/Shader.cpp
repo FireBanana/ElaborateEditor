@@ -38,7 +38,7 @@ Shader::Shader(const char* vertexSource, const char* fragmentSource)
     Use();
 }
 
-void Shader::Draw(const Buffer<float>& vertexBuffer, const Buffer<int>& elementBuffer)
+void Shader::DrawIndexed(const Buffer<float>& vertexBuffer, const Buffer<int>& elementBuffer)
 {
     elementBuffer.Bind();
     vertexBuffer.Bind();
@@ -49,6 +49,13 @@ void Shader::Draw(const Buffer<float>& vertexBuffer, const Buffer<int>& elementB
         GL_UNSIGNED_INT,
         0
     );
+}
+
+void Shader::Draw(const Buffer<float>& vertexBuffer, int count)
+{
+    vertexBuffer.Bind();
+
+    glDrawArrays(GL_TRIANGLES, 0, count);
 }
 
 void Shader::SetUniformFloat4(const char* name, const glm::mat4& matrix)

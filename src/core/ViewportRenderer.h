@@ -27,6 +27,12 @@ public:
 
 private:
 
+	double m_DeltaTime;
+	double m_LastFrame;
+
+	glm::vec2 m_MousePositionDelta;
+	glm::vec2 m_LastMousePosition;
+
 	ViewportRenderData* m_RenderData;
 
 	VisualObject m_Viewport;

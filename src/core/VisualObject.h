@@ -6,7 +6,7 @@
 class VisualObject
 {
 public:
-	VisualObject() {};
+	VisualObject() : m_ModelMatrix(1.0f) {};
 
 	inline void SetObjectData(Buffer<float> v, Buffer<int> i, VertexArray* p)
 	{

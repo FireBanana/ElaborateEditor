@@ -1,12 +1,17 @@
 #include "ViewportRenderer.h"
 #include "Logger.h"
 #include "WindowResizeEvent.h"
+#include "MousePositionEvent.h"
+
+#include <GLFW/glfw3.h>
 
 ViewportRenderer::ViewportRenderer(ViewportRenderData* data)
 	: m_BackgroundShader("shaders\\vertex.vs", "shaders\\fragment.fs"),
 	  m_DefaultShader("shaders\\default_vertex.vs", "shaders\\default_fragment.fs"),
-	  m_RenderData(data)
+	  m_RenderData(data), m_LastFrame(0)
 {
+	m_DeltaTime = glfwGetTime();
+
 	//-----------------------------------------------------
 	m_2DVertexArray.Bind();
 
@@ -47,36 +52,53 @@ ViewportRenderer::ViewportRenderer(ViewportRenderData* data)
 
 	cubeVertexBuffer.PushData(
 		{
-			//Vertex Positions
-			1.0f, -1.0f, 1.0f,
-			1.0f, 1.0f, 1.0f,
-			1.0f, 1.0f, -1.0f,
-			1.0f, -1.0f, -1.0f,
-			-1.0f, -1.0f, 1.0f,
-			-1.0f, -1.0f, 1.0f,
-			-1.0f, 1.0f, 1.0f,
-			-1.0f, 1.0f, -1.0f			
+			//Positions			  //Normals
+			 -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+			-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+			-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 		}
 	);
 
-	cubeIndexBuffer.PushData(
-		{
-			0, 1, 2,
-			2, 0, 3,
-			3, 0, 5,
-			5, 3, 4,
-			4, 5, 6,
-			6, 4, 7,
-			7, 6, 1,
-			1, 7, 2,
-			1, 6, 5,
-			5, 1, 0,
-			3, 4, 2,
-			2, 7, 4
-		}
-	);
-
-	cubeVertexBuffer.DefineAttribute({0, 3});
+	cubeVertexBuffer.DefineAttribute({ 0, 3 });			//Positions
+	cubeVertexBuffer.DefineAttribute({ 1, 3 });			//Normals
 	cubeVertexBuffer.SetAttributes();
 
 	m_Cube.SetObjectData(cubeVertexBuffer, cubeIndexBuffer, &m_3DVertexArray);
@@ -92,13 +114,24 @@ ViewportRenderer::ViewportRenderer(ViewportRenderData* data)
 
 void ViewportRenderer::Render()
 {
-	m_2DVertexArray.Bind();
-	m_BackgroundShader.Use();
-	m_BackgroundShader.Draw(m_Viewport.GetVertexBuffer(), m_Viewport.GetIndexBuffer());
+	m_DeltaTime = glfwGetTime() - m_LastFrame;
+	m_LastFrame = glfwGetTime();
 
-	m_3DVertexArray.Bind();
+	//=====================================================
+
+	m_2DVertexArray.Bind();
+
+	m_BackgroundShader.Use();
+	m_BackgroundShader.DrawIndexed(m_Viewport.GetVertexBuffer(), m_Viewport.GetIndexBuffer());
+
+	glEnable(GL_DEPTH_TEST);
+
+	m_3DVertexArray.Bind();	
+
 	m_DefaultShader.Use();
-	m_DefaultShader.Draw(m_Cube.GetVertexBuffer(), m_Cube.GetIndexBuffer());
+	m_DefaultShader.Draw(m_Cube.GetVertexBuffer(), 36);
+
+	glDisable(GL_DEPTH_TEST);
 }
 
 void ViewportRenderer::OnEvent(Event& event)
@@ -112,5 +145,22 @@ void ViewportRenderer::OnEvent(Event& event)
 			glViewport(e->Width / 2.0f, 0, e->Width / 2.0f, e->Height);
 			m_Camera.UpdateAspectRatio((e->Width / 2.0f) / e->Height);
 			m_DefaultShader.SetUniformFloat4("projection", m_Camera.GetPerspective());
+		});
+
+	eHandler.Dispatch<MousePositionEvent>([&]() 
+		{
+			MousePositionEvent* e = static_cast<MousePositionEvent*>(&event);
+			
+			m_MousePositionDelta.x = e->XPosition - m_LastMousePosition.x;
+			m_MousePositionDelta.y = e->YPosition - m_LastMousePosition.y;
+
+			m_LastMousePosition.x = e->XPosition;
+			m_LastMousePosition.y = e->YPosition;
+
+			m_Camera.Rotate(
+				glm::radians(e->XPosition),
+				glm::radians(e->YPosition), m_DeltaTime);
+			
+			m_DefaultShader.SetUniformFloat4("view", m_Camera.GetView());
 		});
 }

@@ -3,6 +3,7 @@
 #include "WindowResizeEvent.h"
 #include "KeyPressedEvent.h"
 #include "CharPressedEvent.h"
+#include "MousePositionEvent.h"
 
 Window::Window(uint16_t width, uint16_t height)
 {
@@ -62,7 +63,6 @@ Window::Window(uint16_t width, uint16_t height)
 
 	glfwSetCharCallback(m_Window, [](GLFWwindow* _window, unsigned int codepoint)
 		{
-
 			Window* w = (Window*)glfwGetWindowUserPointer(_window);
 
 			CharPressedEvent e;
@@ -70,6 +70,17 @@ Window::Window(uint16_t width, uint16_t height)
 
 			w->OnEvent(e);
 
+		});
+
+	glfwSetCursorPosCallback(m_Window, [](GLFWwindow* _window, double x, double y) 
+		{
+			Window* w = (Window*)glfwGetWindowUserPointer(_window);
+
+			MousePositionEvent e;
+			e.XPosition = x;
+			e.YPosition = y;
+
+			w->OnEvent(e);
 		});
 
 	// ====================================================================================
