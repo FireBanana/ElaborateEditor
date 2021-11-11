@@ -27,6 +27,9 @@ public:
 
 private:
 
+	bool m_MouseButtonHeld;
+	bool m_FirstMouseClick;
+
 	double m_DeltaTime;
 	double m_LastFrame;
 

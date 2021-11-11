@@ -4,6 +4,7 @@
 #include "KeyPressedEvent.h"
 #include "CharPressedEvent.h"
 #include "MousePositionEvent.h"
+#include "MouseClickedEvent.h"
 
 Window::Window(uint16_t width, uint16_t height)
 {
@@ -43,6 +44,18 @@ Window::Window(uint16_t width, uint16_t height)
 			WindowResizeEvent e;
 			e.Width = _width;
 			e.Height = _height;
+
+			w->OnEvent(e);
+		});
+
+	glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* _window, int button, int action, int mods)
+		{
+			Window* w = (Window*)glfwGetWindowUserPointer(_window);
+
+			MouseClickedEvent e;
+			e.Button = button;
+			e.Action = action;
+			e.Mods = mods;
 
 			w->OnEvent(e);
 		});

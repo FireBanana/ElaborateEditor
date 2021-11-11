@@ -16,8 +16,9 @@ public:
 private:
 	glm::mat4 m_PerspectiveMatrix;
 	glm::mat4 m_ViewMatrix;
-	
-	glm::vec3 m_CameraPosition;
 
 	float m_AspectRatio;
+	float m_X, m_Y;
+	float m_Distance;
+	float m_Sensitivity;
 };

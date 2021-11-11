@@ -2,13 +2,14 @@
 #include "Logger.h"
 #include "WindowResizeEvent.h"
 #include "MousePositionEvent.h"
+#include "MouseClickedEvent.h"
 
 #include <GLFW/glfw3.h>
 
 ViewportRenderer::ViewportRenderer(ViewportRenderData* data)
 	: m_BackgroundShader("shaders\\vertex.vs", "shaders\\fragment.fs"),
 	  m_DefaultShader("shaders\\default_vertex.vs", "shaders\\default_fragment.fs"),
-	  m_RenderData(data), m_LastFrame(0)
+	  m_RenderData(data), m_LastFrame(0), m_MouseButtonHeld(false), m_FirstMouseClick(false)
 {
 	m_DeltaTime = glfwGetTime();
 
@@ -147,9 +148,35 @@ void ViewportRenderer::OnEvent(Event& event)
 			m_DefaultShader.SetUniformFloat4("projection", m_Camera.GetPerspective());
 		});
 
+	eHandler.Dispatch<MouseClickedEvent>([&]() 
+		{
+			MouseClickedEvent* e = static_cast<MouseClickedEvent*>(&event);
+
+			if (e->Button == GLFW_MOUSE_BUTTON_LEFT)
+				if (e->Action == GLFW_PRESS)
+				{
+					m_MouseButtonHeld = true;
+					m_FirstMouseClick = true;
+				}
+				else
+					m_MouseButtonHeld = false;
+
+		});
+
 	eHandler.Dispatch<MousePositionEvent>([&]() 
 		{
+			if (!m_MouseButtonHeld)
+				return;
+
 			MousePositionEvent* e = static_cast<MousePositionEvent*>(&event);
+
+			if (m_FirstMouseClick)
+			{
+				m_LastMousePosition.x = e->XPosition;
+				m_LastMousePosition.y = e->YPosition;
+
+				m_FirstMouseClick = false;
+			}			
 			
 			m_MousePositionDelta.x = e->XPosition - m_LastMousePosition.x;
 			m_MousePositionDelta.y = e->YPosition - m_LastMousePosition.y;
@@ -158,8 +185,8 @@ void ViewportRenderer::OnEvent(Event& event)
 			m_LastMousePosition.y = e->YPosition;
 
 			m_Camera.Rotate(
-				glm::radians(e->XPosition),
-				glm::radians(e->YPosition), m_DeltaTime);
+				m_MousePositionDelta.x,
+				m_MousePositionDelta.y, m_DeltaTime);
 			
 			m_DefaultShader.SetUniformFloat4("view", m_Camera.GetView());
 		});

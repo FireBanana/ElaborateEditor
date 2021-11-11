@@ -6,8 +6,11 @@ out vec4 FragCol;
 
 void main()
 {
-    vec3 lightDir = vec3(1.0, 0.0, 0.5);
+    vec3 lightDir = vec3(1.0, 2.0, 0.5);
     float mag = dot(Normal, normalize(lightDir));
+
+    FragCol = vec4(abs(vec3(Normal)), 1.0);
+    return;
 
     if(mag <= 0.0)
         FragCol = vec4(0.0, 0.0, 0.0, 1.0);

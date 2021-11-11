@@ -8,6 +8,7 @@ enum class EventType
 	MOUSE_POSITION,
 	KEY_PRESSED,
 	CHAR_PRESSED,
+	MOUSE_CLICKED
 };
 
 #define SET_STATIC_TYPE(type) static EventType GetStaticType() { return EventType::type; }
