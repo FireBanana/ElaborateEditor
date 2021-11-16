@@ -5,7 +5,8 @@
 #include "events/CharPressedEvent.h"
 #include "events/KeyPressedEvent.h"
 #include "Logger.h"
-#include <events/WindowResizeEvent.h>
+#include "events/WindowResizeEvent.h"
+#include "File.h"
 
 void TextWindowRenderData::RetractAllLines(int startIndex)
 {
@@ -27,9 +28,30 @@ void TextWindowRenderData::AdvanceAllLines(int startIndex)
     }
 }
 
-TextWindow::TextWindow(std::string name) :
+TextWindow::TextWindow(std::string name, const char* startShaderPath) :
 	m_Name(name), m_IsFocused(false)
 {
+	std::string shader = File::Read(startShaderPath);
+
+	m_IsFocused = true;
+
+	for (int i = 0; i < shader.size(); i++)
+	{
+		if (shader[i] != '\n')
+		{
+			CharPressedEvent e;
+			e.Key = shader[i];
+
+			OnEvent(e);
+		}
+		else
+		{
+			KeyPressedEvent e;
+			e.Key = GLFW_KEY_ENTER;
+
+			OnEvent(e);
+		}
+	}
 }
 
 void TextWindow::Draw()

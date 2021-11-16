@@ -7,8 +7,8 @@
 
 ImguiRenderer::ImguiRenderer(GLFWwindow* window, ImguiWindowData* m_Data)
     : m_Window(window), m_Data(m_Data),
-    m_VertexShaderWindow("Vertex"),
-    m_FragmentShaderWindow("Fragment")
+    m_VertexShaderWindow("Vertex", "shaders\\default_vertex.vs"),
+    m_FragmentShaderWindow("Fragment", "shaders\\default_fragment.fs")
 {
     ImGui::CreateContext();
 

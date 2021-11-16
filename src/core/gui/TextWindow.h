@@ -38,7 +38,7 @@ class TextWindow
 {
 public:
 	TextWindow() {}
-	TextWindow(std::string name);
+	TextWindow(std::string name, const char* startShaderPath);
 
 	void Draw();
 	void OnEvent(Event& event);

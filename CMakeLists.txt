@@ -19,6 +19,8 @@ include_directories(src/core/events/)
 add_executable(ElaborateEditor 
 	src/main.cpp
 	src/util/Logger.h
+	src/util/Logger.cpp
+	src/util/File.h
 	src/core/Window.cpp
 	src/core/Window.h
 	src/core/events/Event.h
@@ -83,7 +85,9 @@ source_group("src/core/events" FILES
 	src/core/events/MousePositionEvent.h)
 
 source_group("src/util" FILES 
-	src/util/Logger.h)
+	src/util/Logger.h
+	src/util/Logger.cpp
+	src/util/File.h)
 
 add_custom_command(TARGET ElaborateEditor POST_BUILD
                    COMMAND "${CMAKE_COMMAND}" 
