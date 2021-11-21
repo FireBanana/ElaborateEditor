@@ -42,6 +42,7 @@ public:
 
 	void Draw();
 	void OnEvent(Event& event);
+	std::string ExtractLinesToString();
 
 	inline void SetPosition(uint16_t x, uint16_t y) { m_RenderData.x = x; m_RenderData.y = y; };
 	inline void SetSize(uint16_t w, uint16_t h) { m_RenderData.width = w; m_RenderData.height = h; };

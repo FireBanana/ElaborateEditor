@@ -9,8 +9,11 @@
 #include "Camera.h"
 #include "VisualObject.h"
 
+class Window;
+
 struct ViewportRenderData
 {
+	Window* window;
 	uint16_t width;
 	uint16_t height;
 	uint16_t x;
@@ -24,6 +27,8 @@ public:
 
 	void Render();
 	void OnEvent(Event& event);
+
+	inline Shader* GetDefaultShader() { return &m_DefaultShader; }
 
 private:
 

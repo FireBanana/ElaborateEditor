@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 #include <glm.hpp>
 #include <gtc/type_ptr.hpp>
+#include <unordered_map>
 
 #include "Buffer.h"
 
@@ -19,8 +20,11 @@ public:
 	void DrawIndexed(const Buffer<float>& vertexBuffer, const Buffer<int>& elementBuffer);
 	void Draw(const Buffer<float>& vertexBuffer, int count);
 	void SetUniformFloat4(const char* name, const glm::mat4& matrix);
+	void ResetSources(std::string& vertexSource, std::string& fragmentSource);
 
 private:
+
+	std::unordered_map<std::string, glm::mat4> m_UniformList;
 
 	unsigned int m_Id;
 	unsigned int m_Vertex;

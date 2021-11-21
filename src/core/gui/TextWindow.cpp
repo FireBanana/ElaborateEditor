@@ -59,7 +59,7 @@ void TextWindow::Draw()
 	if (ImGui::Begin(m_Name.c_str(), nullptr,
 		ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_HorizontalScrollbar))
+		ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
 		ImGui::SetWindowPos(ImVec2(m_RenderData.x, m_RenderData.y));
 		ImGui::SetWindowSize(ImVec2(m_RenderData.width, m_RenderData.height));
@@ -84,6 +84,16 @@ void TextWindow::Draw()
 
 		ImGui::End();
 	}
+}
+
+std::string TextWindow::ExtractLinesToString()
+{
+	std::string s;
+
+	for (int i = 0; i < m_RenderData.textLines.size(); i++)
+		s += m_RenderData.textLines[i] + '\n';
+
+	return s;
 }
 
 void TextWindow::OnEvent(Event& event)

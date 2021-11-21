@@ -1,4 +1,6 @@
 #include "ImguiRenderer.h"
+#include "Window.h"
+
 #include <Logger.h>
 #include <GLFW/glfw3.h>
 #include <math.h>
@@ -35,6 +37,25 @@ void ImguiRenderer::Render()
 
     m_VertexShaderWindow.Draw();
     m_FragmentShaderWindow.Draw();
+
+    if(ImGui::Begin("Console", nullptr, 
+        ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+    {
+        int _width, _height;
+        glfwGetFramebufferSize(m_Window, &_width, &_height);
+
+        ImGui::SetWindowPos(ImVec2(_width / 2.0f, _height - 100.0f));
+        ImGui::SetWindowSize(ImVec2(_width / 2.0f, 100.0f));
+
+        if (ImGui::Button("COMPILE"))
+        {
+            m_Data->window->GetViewportRenderer()->GetDefaultShader()->ResetSources(
+                m_VertexShaderWindow.ExtractLinesToString(),
+                m_FragmentShaderWindow.ExtractLinesToString());
+        }
+
+        ImGui::End();
+    }
 
     //----------------------
 

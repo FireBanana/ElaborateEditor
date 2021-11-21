@@ -60,8 +60,24 @@ void Shader::Draw(const Buffer<float>& vertexBuffer, int count)
 
 void Shader::SetUniformFloat4(const char* name, const glm::mat4& matrix)
 {
+    m_UniformList[name] = matrix;
+
     int modelLoc = glGetUniformLocation(m_Id, name);
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(matrix));
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(m_UniformList[name]));
+}
+
+void Shader::ResetSources(std::string& vertexSource, std::string& fragmentSource)
+{
+    m_VertexCode = vertexSource;
+    m_FragmentCode = fragmentSource;
+
+    CreateShaders();
+    CreateProgram();
+    DeleteShaders();
+    Use();
+
+    for (auto& item : m_UniformList)
+        SetUniformFloat4(item.first.c_str(), item.second);
 }
 
 void Shader::CreateShaders()

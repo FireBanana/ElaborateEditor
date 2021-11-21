@@ -23,6 +23,9 @@ public:
 	inline GLFWwindow* GetWindow() { return m_Window; }
 	inline ImGuiIO* GetIO() { return m_IO; }
 
+	inline ImguiRenderer* GetImguiRenderer() { return m_ImguiRenderer; }
+	inline ViewportRenderer* GetViewportRenderer() { return m_ViewportRenderer; }
+
 private:
 	GLFWwindow* m_Window;
 	ImGuiIO* m_IO;

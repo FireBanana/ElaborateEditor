@@ -108,9 +108,7 @@ ViewportRenderer::ViewportRenderer(ViewportRenderData* data)
 	m_DefaultShader.SetUniformFloat4("view", m_Camera.GetView());
 	m_DefaultShader.SetUniformFloat4("projection", m_Camera.GetPerspective());
 
-	//-----------------------------------------------------
-
-	
+	//-----------------------------------------------------	
 }
 
 void ViewportRenderer::Render()

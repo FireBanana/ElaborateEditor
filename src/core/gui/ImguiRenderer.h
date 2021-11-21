@@ -8,8 +8,11 @@
 
 #include "TextWindow.h"
 
+class Window;
+
 struct ImguiWindowData
 {
+	Window* window;
 	uint16_t width, height;
 };
 
