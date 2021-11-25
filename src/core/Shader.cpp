@@ -62,8 +62,8 @@ void Shader::SetUniformFloat4(const char* name, const glm::mat4& matrix)
 {
     m_UniformList[name] = matrix;
 
-    int modelLoc = glGetUniformLocation(m_Id, name);
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(m_UniformList[name]));
+    int uniformLoc = glGetUniformLocation(m_Id, name);
+    glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(m_UniformList[name]));
 }
 
 void Shader::ResetSources(std::string& vertexSource, std::string& fragmentSource)

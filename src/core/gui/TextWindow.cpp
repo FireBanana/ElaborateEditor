@@ -120,101 +120,142 @@ void TextWindow::OnEvent(Event& event)
 
 			switch (e->Key)
 			{
+			case GLFW_KEY_TAB:
+
+				OnTabPressed();
+				break;
+
 			case GLFW_KEY_BACKSPACE:
 
-				if (m_RenderData.cursorPositionX > 0)
-				{
-					m_RenderData.GetCurrentLine()
-						.erase(m_RenderData.GetCurrentLine().begin() + m_RenderData.cursorPositionX - 1);
-
-					m_RenderData.cursorPositionX--;
-				}
-				else if (m_RenderData.lineNumber > 0)
-				{
-					m_RenderData.cursorPositionX = m_RenderData.GetLastLine().size();
-
-					m_RenderData.GetLastLine() += m_RenderData.GetCurrentLine();
-					m_RenderData.RetractAllLines(m_RenderData.lineNumber + 1);
-
-					m_RenderData.lineNumber--;
-				}
-
+				OnBackspacePressed();
 				break;
 
 			case GLFW_KEY_ENTER:
-				m_RenderData.lineNumber++;
-
-				if (m_RenderData.lineNumber - 1 < m_RenderData.textLines.size() - 1)
-				{
-					m_RenderData.AdvanceAllLines(m_RenderData.lineNumber + 1);
-
-					m_RenderData.GetCurrentLine() =
-						m_RenderData.GetLastLine().substr(
-							m_RenderData.cursorPositionX, m_RenderData.GetLastLine().size()
-						);
-
-					m_RenderData.GetLastLine().erase(
-						m_RenderData.cursorPositionX,
-						m_RenderData.GetLastLine().size());
-				}
-				else
-				{
-					m_RenderData.textLines.insert({ m_RenderData.lineNumber, "" });
-				}
-
-				m_RenderData.cursorPositionX = 0;
-
+				
+				OnEnterPressed();
 				break;
 
 			case GLFW_KEY_LEFT:
 
-				m_RenderData.cursorPositionX =
-					(int)m_RenderData.cursorPositionX - 1 >= 0 ?
-					(int)m_RenderData.cursorPositionX - 1 :
-					0;
-
+				OnLeftPressed();
 				break;
 
 			case GLFW_KEY_RIGHT:
 
-				m_RenderData.cursorPositionX =
-					(int)m_RenderData.cursorPositionX + 1 <= m_RenderData.GetCurrentLine().size() ?
-					(int)m_RenderData.cursorPositionX + 1 :
-					m_RenderData.GetCurrentLine().size();
-
+				OnRightPressed();
 				break;
 
 			case GLFW_KEY_UP:
 
-				m_RenderData.lineNumber =
-					(int)m_RenderData.lineNumber - 1 >= 0 ?
-					m_RenderData.lineNumber - 1 :
-					m_RenderData.lineNumber;
-
-				m_RenderData.cursorPositionX =
-					m_RenderData.cursorPositionX >= m_RenderData.GetCurrentLine().size() ?
-					m_RenderData.GetCurrentLine().size() :
-					m_RenderData.cursorPositionX;
-
+				OnUpPressed();
 				break;
 
 			case GLFW_KEY_DOWN:
 
-				m_RenderData.lineNumber =
-					(int)m_RenderData.lineNumber + 1 < m_RenderData.textLines.size() ?
-					m_RenderData.lineNumber + 1 :
-					m_RenderData.lineNumber;
-
-				m_RenderData.cursorPositionX =
-					m_RenderData.cursorPositionX >= m_RenderData.GetCurrentLine().size() ?
-					m_RenderData.GetCurrentLine().size() :
-					m_RenderData.cursorPositionX;
-
+				OnDownPressed();
 				break;
 			}
 
 		});
 }
+
+//============= KEY EVENTS ========================
+
+void TextWindow::OnTabPressed()
+{
+	CharPressedEvent cEvent;
+	cEvent.Key = GLFW_KEY_TAB;
+	OnEvent(cEvent);
+}
+
+void TextWindow::OnBackspacePressed()
+{
+	if (m_RenderData.cursorPositionX > 0)
+	{
+		m_RenderData.GetCurrentLine()
+			.erase(m_RenderData.GetCurrentLine().begin() + m_RenderData.cursorPositionX - 1);
+
+		m_RenderData.cursorPositionX--;
+	}
+	else if (m_RenderData.lineNumber > 0)
+	{
+		m_RenderData.cursorPositionX = m_RenderData.GetLastLine().size();
+
+		m_RenderData.GetLastLine() += m_RenderData.GetCurrentLine();
+		m_RenderData.RetractAllLines(m_RenderData.lineNumber + 1);
+
+		m_RenderData.lineNumber--;
+	}
+}
+
+void TextWindow::OnEnterPressed()
+{
+	m_RenderData.lineNumber++;
+
+	if (m_RenderData.lineNumber - 1 < m_RenderData.textLines.size() - 1)
+	{
+		m_RenderData.AdvanceAllLines(m_RenderData.lineNumber + 1);
+
+		m_RenderData.GetCurrentLine() =
+			m_RenderData.GetLastLine().substr(
+				m_RenderData.cursorPositionX, m_RenderData.GetLastLine().size()
+			);
+
+		m_RenderData.GetLastLine().erase(
+			m_RenderData.cursorPositionX,
+			m_RenderData.GetLastLine().size());
+	}
+	else
+	{
+		m_RenderData.textLines.insert({ m_RenderData.lineNumber, "" });
+	}
+
+	m_RenderData.cursorPositionX = 0;
+}
+
+void TextWindow::OnLeftPressed()
+{
+	m_RenderData.cursorPositionX =
+		(int)m_RenderData.cursorPositionX - 1 >= 0 ?
+		(int)m_RenderData.cursorPositionX - 1 :
+		0;
+}
+
+void TextWindow::OnRightPressed()
+{
+	m_RenderData.cursorPositionX =
+		(int)m_RenderData.cursorPositionX + 1 <= m_RenderData.GetCurrentLine().size() ?
+		(int)m_RenderData.cursorPositionX + 1 :
+		m_RenderData.GetCurrentLine().size();
+}
+
+void TextWindow::OnUpPressed()
+{
+	m_RenderData.lineNumber =
+		(int)m_RenderData.lineNumber - 1 >= 0 ?
+		m_RenderData.lineNumber - 1 :
+		m_RenderData.lineNumber;
+
+	m_RenderData.cursorPositionX =
+		m_RenderData.cursorPositionX >= m_RenderData.GetCurrentLine().size() ?
+		m_RenderData.GetCurrentLine().size() :
+		m_RenderData.cursorPositionX;
+}
+
+void TextWindow::OnDownPressed()
+{
+	m_RenderData.lineNumber =
+		(int)m_RenderData.lineNumber + 1 < m_RenderData.textLines.size() ?
+		m_RenderData.lineNumber + 1 :
+		m_RenderData.lineNumber;
+
+	m_RenderData.cursorPositionX =
+		m_RenderData.cursorPositionX >= m_RenderData.GetCurrentLine().size() ?
+		m_RenderData.GetCurrentLine().size() :
+		m_RenderData.cursorPositionX;
+}
+
+//=================================================
 
 void TextWindow::DrawCursor()
 {

@@ -42,6 +42,15 @@ public:
 
 	void Draw();
 	void OnEvent(Event& event);
+
+	void OnTabPressed();
+	void OnBackspacePressed();
+	void OnEnterPressed();
+	void OnLeftPressed();
+	void OnRightPressed();
+	void OnUpPressed();
+	void OnDownPressed();
+
 	std::string ExtractLinesToString();
 
 	inline void SetPosition(uint16_t x, uint16_t y) { m_RenderData.x = x; m_RenderData.y = y; };

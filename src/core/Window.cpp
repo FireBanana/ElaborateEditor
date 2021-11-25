@@ -62,7 +62,7 @@ Window::Window(uint16_t width, uint16_t height)
 
 	glfwSetKeyCallback(m_Window, [](GLFWwindow* _window, int _key, int _scancode, int _action, int _mods)
 		{
-			if (_action != GLFW_PRESS || _mods != 0)
+			if (_action == GLFW_RELEASE)
 				return;
 
 			Window* w = (Window*)glfwGetWindowUserPointer(_window);
