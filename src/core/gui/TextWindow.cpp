@@ -215,18 +215,28 @@ void TextWindow::OnEnterPressed()
 
 void TextWindow::OnLeftPressed()
 {
-	m_RenderData.cursorPositionX =
-		(int)m_RenderData.cursorPositionX - 1 >= 0 ?
-		(int)m_RenderData.cursorPositionX - 1 :
-		0;
+	if (m_RenderData.cursorPositionX != 0)
+	{
+		m_RenderData.cursorPositionX--;
+	}
+	else if(m_RenderData.lineNumber > 0)
+	{
+		m_RenderData.lineNumber--;
+		m_RenderData.cursorPositionX = m_RenderData.GetCurrentLine().size();
+	}
 }
 
 void TextWindow::OnRightPressed()
 {
-	m_RenderData.cursorPositionX =
-		(int)m_RenderData.cursorPositionX + 1 <= m_RenderData.GetCurrentLine().size() ?
-		(int)m_RenderData.cursorPositionX + 1 :
-		m_RenderData.GetCurrentLine().size();
+	if (m_RenderData.cursorPositionX != m_RenderData.GetCurrentLine().size())
+	{
+		m_RenderData.cursorPositionX++;
+	}
+	else if (m_RenderData.lineNumber < m_RenderData.textLines.size() - 1)
+	{
+		m_RenderData.lineNumber++;
+		m_RenderData.cursorPositionX = 0;
+	}
 }
 
 void TextWindow::OnUpPressed()
