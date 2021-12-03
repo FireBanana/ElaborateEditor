@@ -12,8 +12,14 @@ struct TextWindowRenderData
 	uint16_t x;
 	uint16_t y;
 
+	uint16_t mouseX;
+	uint16_t mouseY;
+
 	unsigned int lineNumber;
 	unsigned int cursorPositionX;
+
+	float scrollY;
+	float scrollX;
 
 	std::unordered_map<int, std::string> textLines;
 
@@ -43,14 +49,6 @@ public:
 	void Draw();
 	void OnEvent(Event& event);
 
-	void OnTabPressed();
-	void OnBackspacePressed();
-	void OnEnterPressed();
-	void OnLeftPressed();
-	void OnRightPressed();
-	void OnUpPressed();
-	void OnDownPressed();
-
 	std::string ExtractLinesToString();
 
 	inline void SetPosition(uint16_t x, uint16_t y) { m_RenderData.x = x; m_RenderData.y = y; };
@@ -63,5 +61,14 @@ private:
 	TextWindowRenderData m_RenderData;
 	bool m_IsFocused;
 
+	void OnTabPressed();
+	void OnBackspacePressed();
+	void OnEnterPressed();
+	void OnLeftPressed();
+	void OnRightPressed();
+	void OnUpPressed();
+	void OnDownPressed();
+
 	void DrawCursor();
+	void MousePositionToCursor(uint16_t x, uint16_t y);
 };

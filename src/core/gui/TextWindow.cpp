@@ -1,9 +1,12 @@
 #include <GLFW/glfw3.h>
 #include <imgui.h>
+#include <glm.hpp>
 
 #include "TextWindow.h"
 #include "events/CharPressedEvent.h"
 #include "events/KeyPressedEvent.h"
+#include "events/MouseClickedEvent.h"
+#include "events/MousePositionEvent.h"
 #include "Logger.h"
 #include "events/WindowResizeEvent.h"
 #include "File.h"
@@ -65,6 +68,9 @@ void TextWindow::Draw()
 		ImGui::SetWindowSize(ImVec2(m_RenderData.width, m_RenderData.height));
 
 		ImGui::SetWindowFontScale(1.0f);
+		
+		m_RenderData.scrollY = ImGui::GetScrollY();
+		m_RenderData.scrollX = ImGui::GetScrollX();
 
 		m_IsFocused = ImGui::IsWindowFocused();
 
@@ -157,15 +163,37 @@ void TextWindow::OnEvent(Event& event)
 			}
 
 		});
+
+	eHandler.Dispatch<MousePositionEvent>([&]()
+		{
+			MousePositionEvent* e = static_cast<MousePositionEvent*>(&event);
+
+			m_RenderData.mouseX = e->XPosition;
+			m_RenderData.mouseY = e->YPosition;
+		});
+
+	eHandler.Dispatch<MouseClickedEvent>([&]() 
+		{
+			MouseClickedEvent* e = static_cast<MouseClickedEvent*>(&event);
+
+			if (e->Button == GLFW_MOUSE_BUTTON_LEFT)
+				if (e->Action == GLFW_PRESS)
+					MousePositionToCursor(m_RenderData.mouseX, m_RenderData.mouseY);
+		});
 }
 
 //============= KEY EVENTS ========================
 
 void TextWindow::OnTabPressed()
 {
-	CharPressedEvent cEvent;
-	cEvent.Key = GLFW_KEY_TAB;
-	OnEvent(cEvent);
+	for (int i = 0; i < 4; i++)
+	{
+		m_RenderData.GetCurrentLine().insert(
+			m_RenderData.GetCurrentLine().begin() + m_RenderData.cursorPositionX,
+			' ');
+
+		m_RenderData.cursorPositionX++;
+	}
 }
 
 void TextWindow::OnBackspacePressed()
@@ -277,7 +305,9 @@ void TextWindow::DrawCursor()
 	float   charSize		= ImGui::CalcTextSize("0").x;
 	float   spacing			= ImGui::GetTextLineHeightWithSpacing();
 
-	textDrawOffset.y = m_RenderData.lineNumber * spacing + spacing + padding.y + windowPos.y;
+	textDrawOffset.y = 
+		m_RenderData.lineNumber * spacing + spacing + padding.y + windowPos.y - ImGui::GetScrollY();
+	
 	textDrawOffset.x = 1.0f +
 		(charSize * (std::to_string(m_RenderData.lineNumber).size() + 1)) +
 		(charSize * m_RenderData.cursorPositionX) +
@@ -291,9 +321,30 @@ void TextWindow::DrawCursor()
 			padding.x -
 			ImGui::GetScrollX() + windowPos.x,
 
-			(m_RenderData.lineNumber * spacing) + padding.y + windowPos.y),
+			(m_RenderData.lineNumber * spacing) + padding.y + windowPos.y - ImGui::GetScrollY()),
 
 		textDrawOffset,
 		ImColor(255, 255, 255, sin(glfwGetTime() * 10) * 255)
 	);
+}
+
+void TextWindow::MousePositionToCursor(uint16_t x, uint16_t y)
+{
+	float	yPos	  = m_RenderData.y;
+	float   xPos	  = m_RenderData.x;
+	float   spacing   = ImGui::GetTextLineHeightWithSpacing();
+	
+	int line = (y - yPos + m_RenderData.scrollY - ImGui::GetStyle().WindowPadding.y) / (spacing);
+	int pos = 
+		( 
+			x - 1.0f - ImGui::GetStyle().WindowPadding.x - 
+			ImGui::CalcTextSize(std::to_string(line).c_str()).x + m_RenderData.scrollX
+		) 
+		/ ImGui::CalcTextSize("0").x;
+
+	line = glm::clamp(line, 0, (int)m_RenderData.textLines.size() - 1);
+	pos = glm::clamp(pos, 0, (int)m_RenderData.textLines[line].size());
+
+	m_RenderData.lineNumber = line;
+	m_RenderData.cursorPositionX = pos;
 }
