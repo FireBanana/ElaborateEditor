@@ -16,6 +16,7 @@ Window::Window(uint16_t width, uint16_t height)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	m_Window = glfwCreateWindow(width, height, "Elaborate Editor", NULL, NULL);
 
@@ -34,6 +35,8 @@ Window::Window(uint16_t width, uint16_t height)
 
 	glfwSetWindowUserPointer(m_Window, this);
 	glViewport(width / 2.0f, 0, width / 2.0f, height);
+
+	glEnable(GL_MULTISAMPLE);
 
 	//========= Set Events ================================================================
 
