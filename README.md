@@ -7,3 +7,6 @@ This will change in the future as more features and primitives are added.
 ## Getting Started
 You will need CMake v.3.21 or above to build the project solution on your machine. To run on windows, execute the build_win.bat script, and for Mac, the build_mac.sh script.
 These will build the required projects inside the **build** folder.
+
+## Images
+![1](images/1.png)

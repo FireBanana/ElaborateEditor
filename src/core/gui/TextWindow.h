@@ -18,13 +18,18 @@ struct TextWindowRenderData
 	unsigned int lineNumber;
 	unsigned int cursorPositionX;
 
+	// Defines the start pos for highlights otherwise the same as cursorPosX
+	unsigned int highlightCursorPosition;
+	unsigned int highlightLineNumber;
+
 	float scrollY;
 	float scrollX;
 
 	std::unordered_map<int, std::string> textLines;
 
 	TextWindowRenderData()
-		: lineNumber(0), cursorPositionX(0), width(0), height(0)
+		: lineNumber(0), cursorPositionX(0), width(0),
+		height(0), highlightCursorPosition(0), highlightLineNumber(0)
 	{};
 
 	inline std::string& GetCurrentLine() { return textLines[lineNumber]; }
@@ -33,12 +38,24 @@ struct TextWindowRenderData
 	{
 		return textLines[lineNumber + 1 < textLines.size() ? lineNumber + 1 : textLines.size()];
 	}
+	inline void			DeleteCurrentLine() { textLines.erase(lineNumber); }
 
-	inline void DeleteCurrentLine() { textLines.erase(lineNumber); }
+	void ResetHighlights() 
+	{ 
+		highlightCursorPosition = cursorPositionX;
+		highlightLineNumber = lineNumber;
+	}
+	
+	bool IsHighlighted() 
+	{ 
+		return cursorPositionX - highlightCursorPosition > 0 || lineNumber != highlightLineNumber; 
+	}	
 
 	void RetractAllLines(int startIndex);
 	void AdvanceAllLines(int startIndex);
 };
+
+typedef std::pair<uint16_t, uint16_t> R_POINT;
 
 class TextWindow
 {
@@ -70,5 +87,7 @@ private:
 	void OnDownPressed();
 
 	void DrawCursor();
-	void MousePositionToCursor(uint16_t x, uint16_t y);
+	void DrawHighlight();
+
+	R_POINT MousePositionToCursor(uint16_t x, uint16_t y);
 };

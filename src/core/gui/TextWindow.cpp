@@ -85,11 +85,56 @@ void TextWindow::Draw()
 			ImGui::Text(m_RenderData.textLines[_lineNumber].c_str());
 		}
 
-		if(m_IsFocused)
+		if (m_IsFocused)
+		{
 			DrawCursor();
+			DrawHighlight();
+		}
 
 		ImGui::End();
 	}
+}
+
+void TextWindow::DrawCursor()
+{
+	ImVec2& padding = ImGui::GetStyle().WindowPadding;
+	ImVec2  textDrawOffset;
+	ImVec2  lineSize = ImGui::CalcTextSize(m_RenderData.GetCurrentLine().c_str());
+	ImVec2	windowPos = ImGui::GetWindowPos();
+
+	float   charSize = ImGui::CalcTextSize("0").x;
+	float   spacing = ImGui::GetTextLineHeightWithSpacing();
+
+	float xStart = (charSize * m_RenderData.cursorPositionX) +
+					(charSize * (std::to_string(m_RenderData.lineNumber).size() + 1)) +
+					padding.x -
+					ImGui::GetScrollX() + windowPos.x;
+
+	float yStart = (m_RenderData.lineNumber * spacing) + padding.y + windowPos.y - ImGui::GetScrollY();
+
+	textDrawOffset.y = yStart + spacing;
+	textDrawOffset.x = 1.0f + xStart;
+
+	ImGui::GetWindowDrawList()->AddRect(
+		ImVec2(xStart, yStart),
+		textDrawOffset,
+		ImColor(255, 255, 255, sin(glfwGetTime() * 10) * 255)
+	);
+}
+
+void TextWindow::DrawHighlight()
+{
+	//TODO add all padding/margins
+	if (m_RenderData.cursorPositionX == m_RenderData.highlightCursorPosition &&
+		m_RenderData.lineNumber == m_RenderData.highlightLineNumber)
+		return;
+
+	float charSize = ImGui::CalcTextSize("0").x;
+
+	ImGui::GetWindowDrawList()->AddRectFilled(
+		ImVec2(m_RenderData.highlightCursorPosition * charSize, m_RenderData.highlightLineNumber * charSize),
+		ImVec2(m_RenderData.cursorPositionX * charSize, m_RenderData.lineNumber * charSize),
+		ImColor::ImColor(1.0f, 1.0f, 1.0f, 0.2f));
 }
 
 std::string TextWindow::ExtractLinesToString()
@@ -118,6 +163,9 @@ void TextWindow::OnEvent(Event& event)
 				e->Key);
 
 			m_RenderData.cursorPositionX++;
+
+			//Clear any highlighting previously
+			m_RenderData.ResetHighlights();
 		});
 
 	eHandler.Dispatch<KeyPressedEvent>([&]()
@@ -162,6 +210,9 @@ void TextWindow::OnEvent(Event& event)
 				break;
 			}
 
+			//Clear any highlighting previously
+			m_RenderData.ResetHighlights();
+
 		});
 
 	eHandler.Dispatch<MousePositionEvent>([&]()
@@ -177,13 +228,30 @@ void TextWindow::OnEvent(Event& event)
 			MouseClickedEvent* e = static_cast<MouseClickedEvent*>(&event);
 
 			if (e->Button == GLFW_MOUSE_BUTTON_LEFT)
+			{
 				if (e->Action == GLFW_PRESS)
-					MousePositionToCursor(m_RenderData.mouseX, m_RenderData.mouseY);
+				{
+					R_POINT coords = MousePositionToCursor(m_RenderData.mouseX, m_RenderData.mouseY);
+
+					m_RenderData.lineNumber = coords.first;
+					m_RenderData.cursorPositionX = coords.second;
+
+					m_RenderData.highlightLineNumber = coords.first;
+					m_RenderData.highlightCursorPosition = coords.second;
+				}
+				else if (e->Action == GLFW_RELEASE)
+				{
+					R_POINT coords = MousePositionToCursor(m_RenderData.mouseX, m_RenderData.mouseY);
+
+					m_RenderData.lineNumber = coords.first;
+					m_RenderData.cursorPositionX = coords.second;
+				}
+			}
 		});
 }
 
 //============= KEY EVENTS ========================
-
+//TODO add highlight visuals
 void TextWindow::OnTabPressed()
 {
 	for (int i = 0; i < 4; i++)
@@ -295,40 +363,7 @@ void TextWindow::OnDownPressed()
 
 //=================================================
 
-void TextWindow::DrawCursor()
-{
-	ImVec2& padding			= ImGui::GetStyle().WindowPadding;
-	ImVec2  textDrawOffset;
-	ImVec2  lineSize		= ImGui::CalcTextSize(m_RenderData.GetCurrentLine().c_str());
-	ImVec2	windowPos		= ImGui::GetWindowPos();
-
-	float   charSize		= ImGui::CalcTextSize("0").x;
-	float   spacing			= ImGui::GetTextLineHeightWithSpacing();
-
-	textDrawOffset.y = 
-		m_RenderData.lineNumber * spacing + spacing + padding.y + windowPos.y - ImGui::GetScrollY();
-	
-	textDrawOffset.x = 1.0f +
-		(charSize * (std::to_string(m_RenderData.lineNumber).size() + 1)) +
-		(charSize * m_RenderData.cursorPositionX) +
-		padding.x -
-		ImGui::GetScrollX() + windowPos.x;
-
-	ImGui::GetWindowDrawList()->AddRect(
-		ImVec2(
-			(charSize * m_RenderData.cursorPositionX) +
-			(charSize * (std::to_string(m_RenderData.lineNumber).size() + 1)) +
-			padding.x -
-			ImGui::GetScrollX() + windowPos.x,
-
-			(m_RenderData.lineNumber * spacing) + padding.y + windowPos.y - ImGui::GetScrollY()),
-
-		textDrawOffset,
-		ImColor(255, 255, 255, sin(glfwGetTime() * 10) * 255)
-	);
-}
-
-void TextWindow::MousePositionToCursor(uint16_t x, uint16_t y)
+R_POINT TextWindow::MousePositionToCursor(uint16_t x, uint16_t y)
 {
 	float	yPos	  = m_RenderData.y;
 	float   xPos	  = m_RenderData.x;
@@ -345,6 +380,5 @@ void TextWindow::MousePositionToCursor(uint16_t x, uint16_t y)
 	line = glm::clamp(line, 0, (int)m_RenderData.textLines.size() - 1);
 	pos = glm::clamp(pos, 0, (int)m_RenderData.textLines[line].size());
 
-	m_RenderData.lineNumber = line;
-	m_RenderData.cursorPositionX = pos;
+	return R_POINT{line, pos};
 }
